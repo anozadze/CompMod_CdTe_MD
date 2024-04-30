@@ -71,7 +71,7 @@ run 1000
 #
 #
 next i
-jump in_deposit.lammps loop
+jump in_deposit_CdTe.lammps loop
 #
 # Save state of simulation
 #
