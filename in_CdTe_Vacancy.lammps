@@ -1,0 +1,63 @@
+log log_vacancy_test.lammps
+
+#load data from output file of initialization
+read_restart state_600K.restart
+
+pair_style    bop
+pair_coeff  * * CdTe1.bop.table Cd Te
+
+compute max_z all reduce max z
+run 0
+
+#create a region in the surface of the substrate where the vacancies will be created
+variable thickness equal 4.0
+variable sxlo equal xlo
+variable sxhi equal xhi
+variable sylo equal ylo
+variable syhi equal yhi
+variable szhi equal c_max_z
+variable szlo equal c_max_z-${thickness}
+region surface block ${sxlo} ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
+
+group surface_atoms region surface
+group Cd_atoms type 1
+group Te_atoms type 2
+
+group Cd_surface_atoms intersect surface_atoms Cd_atoms
+group Te_surface_atoms intersect surface_atoms Te_atoms
+
+variable num_surface_atoms equal count(surface_atoms)
+variable num_Cd_surface_atoms equal count(Cd_surface_atoms)
+variable num_Te_surface_atoms equal count(Te_surface_atoms)
+
+
+variable num_surface_atoms equal count(surface_atoms)
+
+print "Number of atoms in the surface region: ${num_surface_atoms}"
+print "Number of Cd atoms in the surface region: ${num_Cd_surface_atoms}"
+print "Number of Te atoms in the surface region: ${num_Te_surface_atoms}"
+
+#Define the number of vacancies 
+variable num_vacancies equal 10
+
+#Delete random Cd atoms in the surface:
+#delete_atoms random count ${num_vacancies} no Cd_surface_atoms  NULL 482793
+
+
+#Delete random Te atoms in the surface:
+#delete_atoms random count ${num_vacancies} no Te_surface_atoms  NULL 482793
+
+
+print "Number of atoms in the surface region after deleting: ${num_surface_atoms}"
+print "Number of Cd atoms in the surface region after deleting: ${num_Cd_surface_atoms}"
+print "Number of Te atoms in the surface region after deleting: ${num_Te_surface_atoms}"
+
+log log_vacancy.lammps
+write_data initial_state.lammps
+minimize 1.0e-15 1e-15 10000 10000
+write_data vacancy_state_600K.lammps
+#
+
+#output of system with vacancies to be used in deposition:
+write_restart vacany_state_600K.restart
+
