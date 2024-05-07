@@ -1,7 +1,7 @@
 #
 # Set log filename
 #
-log log_deposit.lammps
+log log_deposit2.lammps
 #
 # Tell lammps that you will be modifying internal data structures (adding atoms)
 #
@@ -9,7 +9,7 @@ atom_modify map array
 #
 # Read in the final state of the initialization simulation (will still need to define fixed layer)
 #
-read_restart state_600K.restart
+read_restart state_1000K.restart
 #
 # Define a bottom region of the slab (of thickness 4 Angstroms) in which 
 # the atomis will be fixed (i.e. will always experience a zero force)
@@ -46,10 +46,11 @@ fix 1 fixedlayer setforce 0.0 0.0 0.0
 # Will perform a finite temperature simulation (fixed volume at 1000K)
 #
 fix 2 all nvt temp 1000.0 1000.0 0.01
+# fix 2 all npt temp 1000.0 1000.0 0.01 iso 0.0 0.0 0.01
 #
 # Output structure every 10 steps (this file will rapidly grow in size)
 #
-dump eqiul all atom 10 dump_deposit.atom
+dump eqiul all atom 10 dump_deposit2.atom
 #
 # Will perform twenty deposits (atoms will be created with zero velocity
 # and placed nearer enough such that they are attracted to the surface)
@@ -69,14 +70,15 @@ create_atoms 1 single ${newx1} ${newy1} 45.0
 variable newx2 equal random(xlo,xhi,${seed})
 variable newy2 equal random(ylo,yhi,${seed})
 create_atoms 2 single ${newx2} ${newy2} 45.0
+# space for Clara :)
 run 1000
 #
 #
 #
 next i
-jump in_deposit_CdTe.lammps loop
+jump in_deposit2_CdTe.lammps loop
 #
 # Save state of simulation
 #
-write_restart deposited_state_1000K.restart
+write_restart deposited_state_1000K_2.restart
 
