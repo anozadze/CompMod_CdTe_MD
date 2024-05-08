@@ -1,0 +1,94 @@
+#
+# General simulation parameters
+#
+dimension       3
+atom_style      atomic
+units           metal
+boundary        p p p
+#
+# Set up the lattice 
+#
+lattice custom 6.828870164 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.5 0.0 0.5 basis 0.5 0.5 0.0 basis 0.0 0.5 0.5 basis 0.75 0.75 0.75 basis 0.25 0.75 0.25 basis 0.25 0.25 0.75 basis 0.75 0.25 0.25 
+region box block 0 5 0 5 -2 8
+create_box 2 box
+region slab block 0 5 0 5 -2 8
+create_atoms 2 region slab basis 1 1 basis 2 1  basis 3 1 basis 4 1 basis 5 2 basis 6 2 basis 7 2 basis 8 2
+#
+# Define atomic masses of atom (Cd and Te)
+#
+mass 1 112.411
+mass 2 127.6
+#
+# Define a bottom region of the slab (of thickness 4 Angstroms) in which 
+# the atomis will be fixed (i.e. will always experience a zero force)
+#
+variable thickness equal 4.0
+variable sxlo equal xlo
+variable sxhi equal xhi
+variable sylo equal ylo
+variable syhi equal yhi
+variable szlo equal zlo-0.1
+variable szhi equal zlo+${thickness}
+region layer block ${sxlo} ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
+group fixedlayer region layer
+#
+# Define empirical interatomic force
+#
+pair_style bop
+pair_coeff * * CdTe1.bop.table Cd Te
+#
+# Pair style bop requires setting a communication cutoff of at least 14.70
+#
+comm_modify cutoff 15.00
+#
+# Define neighbour list parameters
+#
+neighbor        0.3 bin  
+neigh_modify    delay 0 every 10 check no
+#
+# Give atoms random velocities such that the instantaneous temperature is 300K
+#
+velocity all create 300.0 220368
+#
+# Define output of thermodynamic variables
+#
+thermo 100
+thermo_style custom step time temp pe ke press vol
+#
+# Set time step of 1 femto-second
+#
+timestep 0.001
+#
+# Equilibriation: room temperature NPT simulation at zero pressure 
+#
+log log_equil.lammps
+fix 1 all npt temp 300.0 300.0 0.001 iso 0.0 0.0 0.1
+run 10000
+#
+# Remove current npt settings
+#
+unfix 1
+#
+# Store every 1000th configuration for visualization in Ovito
+#
+dump 1 all atom 1000 dump_300-2000K_npt.atom
+#
+# Temperature anneal to 2000K to study thermal expansion and melting
+#
+log log_anneal.lammps
+fix 1 all npt temp 300.0 2000.0 0.001 iso 0.0 0.0 0.1
+run 100000
+#
+# Output final simulation state. Can be used to continue simulation
+#
+write_restart final_state.restart
+
+
+
+
+
+
+
+
+
+

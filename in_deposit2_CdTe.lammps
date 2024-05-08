@@ -57,7 +57,11 @@ dump eqiul all atom 10 dump_deposit2.atom
 #
 # This is done via a loop where each cycle represent creation of an atom
 # and 1000 md steps
+# 
+# Also, to keep track of the ID of the newly created atom, introduce a variable
+# n that automatically updates with increasing number of atoms 
 #
+variable n equal atoms
 variable i loop 1 20
 label loop
 #
@@ -67,10 +71,11 @@ variable seed equal 12345
 variable newx1 equal random(xlo,xhi,${seed})
 variable newy1 equal random(ylo,yhi,${seed})
 create_atoms 1 single ${newx1} ${newy1} 45.0
+set atom ${n} vx 0.0 vy 0.0 vz -36.395
 variable newx2 equal random(xlo,xhi,${seed})
 variable newy2 equal random(ylo,yhi,${seed})
 create_atoms 2 single ${newx2} ${newy2} 45.0
-# space for Clara :)
+set atom ${n} vx 0.0 vy 0.0 vz -10.802
 run 1000
 #
 #
