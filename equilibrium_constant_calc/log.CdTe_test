@@ -1,0 +1,187 @@
+# log file name
+
+# variable latt0 equal 6.00
+variable latt0 equal 8.00
+variable max_iter equal 101
+variable shift_i  equal ceil(${max_iter}/2.0)
+variable shift_i  equal ceil(101/2.0)
+label loop
+variable i loop ${max_iter}
+variable i loop 101
+  if "$i > ${max_iter}" then "jump in_lc_calc"
+  variable j equal $i-${shift_i}
+  variable j equal 1-${shift_i}
+  variable j equal 1-51
+  variable latt equal ${latt0}+$j/50.0
+  variable latt equal 8+$j/50.0
+  variable latt equal 8+-50/50.0
+
+  clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
+  units metal
+  dimension 3
+  atom_style atomic
+  boundary p p p
+  newton on
+
+  # number of cpus in x, y, and z dimensions
+  processors 1 1 1
+
+  lattice custom ${latt} a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.5 0.0 0.5 basis 0.5 0.5 0.0 basis 0.0 0.5 0.5 basis 0.75 0.75 0.75 basis 0.25 0.75 0.25 basis 0.25 0.25 0.75 basis 0.75 0.25 0.25
+  lattice custom 7 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.5 0.0 0.5 basis 0.5 0.5 0.0 basis 0.0 0.5 0.5 basis 0.75 0.75 0.75 basis 0.25 0.75 0.25 basis 0.25 0.25 0.75 basis 0.75 0.25 0.25
+Lattice spacing in x,y,z = 7.0000000 7.0000000 7.0000000
+  region box block 0 6 0 6 -2 8
+  create_box 2 box
+Created orthogonal box = (0.0000000 0.0000000 -14.000000) to (42.000000 42.000000 56.000000)
+  1 by 1 by 1 MPI processor grid
+
+  # Now add the slab of atoms
+  #
+  region slab block 0 6 0 6 -2 4
+  create_atoms 2 region slab basis 1 1 basis 2 1  basis 3 1 basis 4 1 basis 5 2 basis 6 2 basis 7 2 basis 8 2
+Created 1800 atoms
+  using lattice units in orthogonal box = (0.0000000 0.0000000 -14.000000) to (42.000000 42.000000 56.000000)
+  create_atoms CPU = 0.000 seconds
+
+  mass 1 112.411
+  mass 2 127.6
+
+#
+# Define a bottom region of the slab (of thickness 4 Angstroms) in which
+# the atomis will be fixed (i.e. will always experience a zero force)
+#
+variable thickness equal 4.0
+variable sxlo equal xlo
+variable sxhi equal xhi
+variable sylo equal ylo
+variable syhi equal yhi
+variable szlo equal zlo-0.1
+variable szhi equal zlo+${thickness}
+variable szhi equal zlo+4
+region layer block ${sxlo} ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
+region layer block 0 ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
+region layer block 0 42 ${sylo} ${syhi} ${szlo} ${szhi} units box
+region layer block 0 42 0 ${syhi} ${szlo} ${szhi} units box
+region layer block 0 42 0 42 ${szlo} ${szhi} units box
+region layer block 0 42 0 42 -14.1 ${szhi} units box
+region layer block 0 42 0 42 -14.1 -10 units box
+group fixedlayer region layer
+216 atoms in group fixedlayer
+
+  # Define embedded atom potential for Cadmium Telluride
+  #
+  pair_style bop
+  pair_coeff * * CdTe1.bop.table Cd Te
+Reading BOP potential file CdTe1.bop.table with DATE: 2012-06-25
+  # pair_modify shift yes
+
+  # Pair style bop requires setting a communication cutoff of at least 14.70
+  #
+  comm_modify cutoff 15.00
+
+  neighbor 0.31 bin
+  neigh_modify delay 0 every 1 check yes
+
+  thermo 10
+  thermo_style custom step lx ly lz press pxx pyy pzz pe temp
+  dump 1 all custom 10 CdTe_DC.dump id type xs ys zs
+  dump_modify 1 format line "%d %d %25.17E %25.17E %25.17E"
+
+  variable EPOT equal pe
+  variable NP equal atoms
+  variable ELAT equal pe/${NP}
+  variable ELAT equal pe/1800
+  variable VOL equal vol
+  variable rho equal ${NP}/${VOL}
+  variable rho equal 1800/${VOL}
+  variable rho equal 1800/123480
+  variable AtomVol equal ${VOL}/${NP}
+  variable AtomVol equal 123480/${NP}
+  variable AtomVol equal 123480/1800
+
+  # Minimize structure to find relaxed zero temperature structure
+  #
+  min_style cg
+  minimize        1.0e-15 1e-15 100000 100000
+Neighbor list info ...
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 5.21
+  ghost atom cutoff = 15
+  binsize = 2.605, bins = 17 17 27
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair bop, perpetual
+      attributes: full, newton on, ghost
+      pair build: full/bin/ghost
+      stencil: full/ghost/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 13.71 | 13.71 | 13.71 Mbytes
+Step Lx Ly Lz Press Pxx Pyy Pzz PotEng Temp 
+       0           42           42           70   -14146.392   -14102.773   -14102.773   -14233.631    -3714.111            0 
+      10           42           42           70   -6900.6278   -8175.0608   -8175.0608   -4351.7619   -3739.8128            0 
+      20           42           42           70    -4183.479   -5905.4819   -5905.4819   -739.47333   -3745.5223            0 
+      30           42           42           70   -3795.3789   -5574.8467   -5574.8467   -236.44328   -3745.7573            0 
+      40           42           42           70    -3647.383   -5446.9305   -5446.9305   -48.287775   -3745.7707            0 
+      50           42           42           70   -3615.3809   -5419.0196   -5419.0196   -8.1034719   -3745.7711            0 
+      60           42           42           70   -3610.0802   -5414.3891   -5414.3891   -1.4622842   -3745.7712            0 
+      70           42           42           70   -3609.1586   -5413.5862   -5413.5862  -0.30341116   -3745.7712            0 
+      80           42           42           70   -3608.9702   -5413.4219   -5413.4219  -0.06699273   -3745.7712            0 
+      90           42           42           70   -3608.9283   -5413.3854   -5413.3854 -0.013900687   -3745.7712            0 
+      96           42           42           70   -3608.9208    -5413.379    -5413.379 -0.004460022   -3745.7712            0 
+Loop time of 0.765344 on 1 procs for 96 steps with 1800 atoms
+
+100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+     -3714.11096886146  -3745.77115371606  -3745.77115371606
+  Force two-norm initial, final = 4.7745830 1.9954503e-06
+  Force max component initial, final = 0.39582739 7.7188530e-08
+  Final line search alpha, max atom move = 1.0000000 7.7188530e-08
+  Iterations, force evaluations = 96 187
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.7211     | 0.7211     | 0.7211     |   0.0 | 94.22
+Neigh   | 0.023454   | 0.023454   | 0.023454   |   0.0 |  3.06
+Comm    | 0.0029359  | 0.0029359  | 0.0029359  |   0.0 |  0.38
+Output  | 0.011865   | 0.011865   | 0.011865   |   0.0 |  1.55
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.005988   |            |       |  0.78
+
+Nlocal:        1800.00 ave        1800 max        1800 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        5370.00 ave        5370 max        5370 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      6912.00 ave        6912 max        6912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 6912
+Ave neighs/atom = 3.8400000
+Neighbor list builds = 7
+Dangerous builds = 0
+  #
+  # Set up initial temperature to be 1000K within the dynamical region and 0K within the static region
+  #
+  velocity all create 1000.0 220368
+  velocity fixedlayer create 0.0 123456
+  #
+  # Equilibriate at 1000K
+  #
+  # fix 2 all nvt temp 1000.0 1000.0 0.01
+
+  shell echo ${latt} ${rho} ${AtomVol} ${EPOT} ${ELAT} >> out.data
+  shell echo 7 ${rho} ${AtomVol} ${EPOT} ${ELAT} >> out.data
+  shell echo 7 0.0145772594752187 ${AtomVol} ${EPOT} ${ELAT} >> out.data
+  shell echo 7 0.0145772594752187 68.6 ${EPOT} ${ELAT} >> out.data
+  shell echo 7 0.0145772594752187 68.6 -3745.77115371606 ${ELAT} >> out.data
+  shell echo 7 0.0145772594752187 68.6 -3745.77115371606 -2.0809839742867 >> out.data
+  next i
+  jump in_lc_calc loop
+ERROR on proc 0: Cannot open input script in_lc_calc: No such file or directory (src/input.cpp:1008)
+Last command:   jump in_lc_calc loop

@@ -18,8 +18,10 @@ boundary        p p p
 # source: https://www.ctcms.nist.gov/potentials/entry/2012--Ward-D-K-Zhou-X-W-Wong-B-M-et-al--Cd-Te/2012--Ward-D-K--Cd-Te--LAMMPS--ipr1.html
 # a0 for CdTe, prototype: B3--ZnC--cubic-zinc-blende
 #
-# lattice custom 6.828870164 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.25 0.25 0.25 basis 0.5 0.5 0.0 basis 0.75 0.75 0.25 basis 0.25 0.25 0 basis 0.75 0.75 0 basis 0.5 0 0.5 basis 0 0.5 0.5
-lattice custom 6.828870164 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.5 0.0 0.5 basis 0.5 0.5 0.0 basis 0.0 0.5 0.5 basis 0.75 0.75 0.75 basis 0.25 0.75 0.25 basis 0.25 0.25 0.75 basis 0.75 0.25 0.25 
+# lattice custom 6.828870164 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.5 0.0 0.5 basis 0.5 0.5 0.0 basis 0.0 0.5 0.5 basis 0.75 0.75 0.75 basis 0.25 0.75 0.25 basis 0.25 0.25 0.75 basis 0.75 0.25 0.25 
+# calculated new lattice constant at 1000K via extrapolation: a = ?
+# result from lattice constant trials: a = 8.0 ?!
+lattice custom 7.5 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.5 0.0 0.5 basis 0.5 0.5 0.0 basis 0.0 0.5 0.5 basis 0.75 0.75 0.75 basis 0.25 0.75 0.25 basis 0.25 0.25 0.75 basis 0.75 0.25 0.25 
 region box block 0 5 0 5 -2 8
 create_box 2 box
 
@@ -27,7 +29,6 @@ create_box 2 box
 # Now add the slab of atoms
 #
 region slab block 0 5 0 5 -2 4
-# create_atoms 2 region slab basis 1 1 basis 2 1  basis 3 1 basis 4 1 basis 5 2 basis 6 2 basis 7 2 basis 8 2
 create_atoms 2 region slab basis 1 1 basis 2 1  basis 3 1 basis 4 1 basis 5 2 basis 6 2 basis 7 2 basis 8 2
 
 # Define atomic masses of atom (Cd and Te)

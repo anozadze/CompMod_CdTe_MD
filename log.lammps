@@ -4,4 +4,4 @@ OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98
 #
 # Set log filename
 #
-log log_deposit2.lammps
+log log_initialize.lammps

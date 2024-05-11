@@ -1,0 +1,9 @@
+LAMMPS (29 Sep 2021 - Update 2)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
+# the purpose of this script is to determine the real equilibrium lattice constant for our CdTe structure.
+# the script was taken from the following source and modified to our problem:
+# http://micro.stanford.edu/wiki/M03_Equilibrium_Lattice_Constant_and_Bulk_Modulus#LAMMPS_script
+
+
+log log.CdTe_test

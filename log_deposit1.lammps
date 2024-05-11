@@ -9,11 +9,11 @@ read_restart state_1000K.restart
 Reading restart file ...
   restart file = 29 Sep 2021, LAMMPS = 29 Sep 2021
   restoring atom style atomic from restart
-  orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  orthogonal box = (0.0000000 0.0000000 -16.000000) to (40.000000 40.000000 64.000000)
   1 by 1 by 1 MPI processor grid
   pair style bop stores no restart info
   1250 atoms
-  read_restart CPU = 0.004 seconds
+  read_restart CPU = 0.002 seconds
 #
 # Define a bottom region of the slab (of thickness 4 Angstroms) in which
 # the atomis will be fixed (i.e. will always experience a zero force)
@@ -28,11 +28,11 @@ variable szhi equal zlo+${thickness}
 variable szhi equal zlo+4
 region layer block ${sxlo} ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
 region layer block 0 ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
-region layer block 0 34.14435082 ${sylo} ${syhi} ${szlo} ${szhi} units box
-region layer block 0 34.14435082 0 ${syhi} ${szlo} ${szhi} units box
-region layer block 0 34.14435082 0 34.14435082 ${szlo} ${szhi} units box
-region layer block 0 34.14435082 0 34.14435082 -13.657740328 ${szhi} units box
-region layer block 0 34.14435082 0 34.14435082 -13.657740328 -9.657740328 units box
+region layer block 0 40 ${sylo} ${syhi} ${szlo} ${szhi} units box
+region layer block 0 40 0 ${syhi} ${szlo} ${szhi} units box
+region layer block 0 40 0 40 ${szlo} ${szhi} units box
+region layer block 0 40 0 40 -16 ${szhi} units box
+region layer block 0 40 0 40 -16 -12 units box
 group fixedlayer region layer
 150 atoms in group fixedlayer
 #
@@ -58,9 +58,8 @@ fix 1 fixedlayer setforce 0.0 0.0 0.0
 #
 # Will perform a finite temperature simulation (fixed volume at 1500K)
 #
-fix 2 all nvt temp 1000.0 1000.0 0.01
-Resetting global fix info from restart file:
-  fix style: nvt, fix ID: 2
+# fix 2 all nvt temp 1000.0 1000.0 0.01
+fix 2 all npt temp 1000.0 1000.0 0.01 iso 0.0 0.0 0.01
 #
 # Output structure every 10 steps (this file will rapidly grow in size)
 #
@@ -82,76 +81,77 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 29.7039837037963 ${newy} 31.0
-create_atoms 1 single 29.7039837037963 0.355986449523733 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 34.7981238365173 ${newy} 19.0
+create_atoms 1 single 34.7981238365173 0.417037010192871 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (0.0000000 0.0000000 -16.000000) to (40.000000 40.000000 64.000000)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 10.023683191571 ${newy2} 31.0
-create_atoms 2 single 10.023683191571 0.70483558625816 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 11.7427134513855 ${newy2} 19.0
+create_atoms 2 single 11.7427134513855 0.82571268081665 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (0.0000000 0.0000000 -16.000000) to (40.000000 40.000000 64.000000)
   create_atoms CPU = 0.000 seconds
 run 1000
-All restart file global fix info was re-assigned
+Unused restart file global fix info:
+  fix style: nvt, fix ID: 2
 Neighbor list info ...
   update every 10 steps, delay 0 steps, check no
   max neighbors/atom: 2000, page size: 100000
   master list distance cutoff = 5.2
   ghost atom cutoff = 15
-  binsize = 2.6, bins = 14 14 27
+  binsize = 2.6, bins = 16 16 31
   1 neighbor lists, perpetual/occasional/extra = 1 0 0
   (1) pair bop, perpetual
       attributes: full, newton on, ghost
       pair build: full/bin/ghost
       stencil: full/ghost/bin/3d
       bin: standard
-Per MPI rank memory allocation (min/avg/max) = 9.466 | 9.466 | 9.466 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 9.085 | 9.085 | 9.085 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   10043    971.48254   -2245.2197    -709.1654    34.144351    34.144351    68.288702    79613.474 
-   10100    1017.8284   -2232.3728    -427.1046    34.144351    34.144351    68.288702    79613.474 
-   10200    998.06236   -2233.8085    -464.2642    34.144351    34.144351    68.288702    79613.474 
-   10300    1009.2582   -2230.3136   -1000.9543    34.144351    34.144351    68.288702    79613.474 
-   10400    1009.1764   -2237.0756   -730.29373    34.144351    34.144351    68.288702    79613.474 
-   10500    987.80272   -2251.5832   -711.42603    34.144351    34.144351    68.288702    79613.474 
-   10600    1030.3055   -2238.2724   -347.12605    34.144351    34.144351    68.288702    79613.474 
-   10700    1021.1907   -2237.9083   -773.92971    34.144351    34.144351    68.288702    79613.474 
-   10800    988.55261   -2239.2631   -928.61236    34.144351    34.144351    68.288702    79613.474 
-   10900    1026.0506   -2243.1336   -315.99924    34.144351    34.144351    68.288702    79613.474 
-   11000    1020.1878   -2245.3085    137.27665    34.144351    34.144351    68.288702    79613.474 
-   11043    1063.3275   -2241.8978    211.51113    34.144351    34.144351    68.288702    79613.474 
-Loop time of 23.9635 on 1 procs for 1000 steps with 1252 atoms
+   10489    988.28976   -1953.1128   -3989.9356           40           40           80       128000 
+   10500    1009.7566   -1961.1098    910.71599    39.441013    39.441013    78.882025    122708.36 
+   10600    984.94896   -1978.8126     317.4989    39.346717    39.346717    78.693433    121830.35 
+   10700    1036.8541   -1976.2803    386.75382    39.257827    39.257827    78.515654    121006.52 
+   10800    993.49604   -2000.1472    245.43445    39.088201    39.088201    78.176401    119444.74 
+   10900    1001.2442   -2002.3863   -1006.7068    39.095164    39.095164    78.190328    119508.59 
+   11000    1028.6848   -1993.7853    311.48719    38.846881    38.846881    77.693762    117246.11 
+   11100    1010.1494   -1999.9022   -337.67525    38.826363    38.826363    77.652727    117060.44 
+   11200     995.1729   -2009.1417    267.64927    38.680457    38.680457    77.360915    115745.68 
+   11300    1038.2513    -2004.807   -441.61767    38.694525    38.694525    77.389051    115872.02 
+   11400    1003.0867   -2015.2108    712.41373    38.535709    38.535709    77.071419    114451.12 
+   11489    994.45844   -2020.5865     517.7767    38.492165    38.492165    76.984329    114063.58 
+Loop time of 35.0907 on 1 procs for 1000 steps with 1252 atoms
 
-Performance: 3.605 ns/day, 6.657 hours/ns, 41.730 timesteps/s
-99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
+Performance: 2.462 ns/day, 9.747 hours/ns, 28.498 timesteps/s
+100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 22.214     | 22.214     | 22.214     |   0.0 | 92.70
-Neigh   | 1.3995     | 1.3995     | 1.3995     |   0.0 |  5.84
-Comm    | 0.06279    | 0.06279    | 0.06279    |   0.0 |  0.26
-Output  | 0.22262    | 0.22262    | 0.22262    |   0.0 |  0.93
-Modify  | 0.052591   | 0.052591   | 0.052591   |   0.0 |  0.22
-Other   |            | 0.01167    |            |       |  0.05
+Pair    | 34.293     | 34.293     | 34.293     |   0.0 | 97.73
+Neigh   | 0.62536    | 0.62536    | 0.62536    |   0.0 |  1.78
+Comm    | 0.023905   | 0.023905   | 0.023905   |   0.0 |  0.07
+Output  | 0.09055    | 0.09055    | 0.09055    |   0.0 |  0.26
+Modify  | 0.052299   | 0.052299   | 0.052299   |   0.0 |  0.15
+Other   |            | 0.005662   |            |       |  0.02
 
 Nlocal:        1252.00 ave        1252 max        1252 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4681.00 ave        4681 max        4681 min
+Nghost:        4433.00 ave        4433 max        4433 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8998.00 ave        8998 max        8998 min
+FullNghs:      12540.0 ave       12540 max       12540 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 8998
-Ave neighs/atom = 7.1869010
+Total # of neighbors = 12540
+Ave neighs/atom = 10.015974
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -167,63 +167,63 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 2.61818287234358 ${newy} 31.0
-create_atoms 1 single 2.61818287234358 10.3340229948012 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 3.70549021610935 ${newy} 19.0
+create_atoms 1 single 3.70549021610935 12.4038365061585 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (0.75391775 0.75391775 -14.492165) to (39.246082 39.246082 62.492165)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 21.9974442712295 ${newy2} 31.0
-create_atoms 2 single 21.9974442712295 20.5398307897945 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 25.5524341415364 ${newy2} 19.0
+create_atoms 2 single 25.5524341415364 23.909213621497 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (0.75391775 0.75391775 -14.492165) to (39.246082 39.246082 62.492165)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.51 | 10.51 | 10.51 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.14 | 10.14 | 10.14 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   11043    1061.6302   -2238.7719    445.75001    34.144351    34.144351    68.288702    79613.474 
-   11100    999.81546   -2249.2912    452.61157    34.144351    34.144351    68.288702    79613.474 
-   11200    982.35889   -2250.3698    305.15321    34.144351    34.144351    68.288702    79613.474 
-   11300    1044.0371    -2235.994    884.59371    34.144351    34.144351    68.288702    79613.474 
-   11400    979.64979   -2247.5377    965.42944    34.144351    34.144351    68.288702    79613.474 
-   11500    1023.9998   -2241.1322    757.03812    34.144351    34.144351    68.288702    79613.474 
-   11600    954.73242   -2249.2235     1219.301    34.144351    34.144351    68.288702    79613.474 
-   11700    997.64867   -2245.6358    1493.8338    34.144351    34.144351    68.288702    79613.474 
-   11800    1006.0342   -2239.3347    1866.8293    34.144351    34.144351    68.288702    79613.474 
-   11900    981.13352   -2243.3577    1640.6321    34.144351    34.144351    68.288702    79613.474 
-   12000    1026.2286   -2238.0485    1943.9341    34.144351    34.144351    68.288702    79613.474 
-   12043     1017.194   -2244.1154    1873.3228    34.144351    34.144351    68.288702    79613.474 
-Loop time of 24.3174 on 1 procs for 1000 steps with 1254 atoms
+   11489    992.87111   -2018.3299    635.32302    38.492165    38.492165    76.984329    114063.58 
+   11500    993.14599   -2019.8215   -420.57707    38.577546    38.577546    77.155092     114824.3 
+   11600    1046.2139   -2014.9114    1360.4035    38.352853    38.352853    76.705706    112829.59 
+   11700    1009.1525   -2029.4342   -524.76118    38.414401    38.414401    76.828803    113373.67 
+   11800    1042.7711   -2027.8513   -629.67395    38.320843    38.320843    76.641687    112547.32 
+   11900    1040.9215   -2035.5058    1926.8935    37.981731    37.981731    75.963462    109585.79 
+   12000     964.8381   -2056.5888   -694.85524    38.100062    38.100062    76.200125    110613.23 
+   12100    1006.3465   -2059.1894   -399.26463    37.998891    37.998891    75.997782    109734.39 
+   12200    985.39877   -2059.2202     2333.931    37.668505    37.668505     75.33701    106896.91 
+   12300    1033.0011    -2053.661     1508.502    37.638565    37.638565     75.27713    106642.22 
+   12400    993.12946   -2064.6397    201.04995    37.631481    37.631481    75.262962    106582.02 
+   12489    990.78305   -2077.8816    516.39108    37.485081    37.485081    74.970163    105342.92 
+Loop time of 34.2905 on 1 procs for 1000 steps with 1254 atoms
 
-Performance: 3.553 ns/day, 6.755 hours/ns, 41.123 timesteps/s
+Performance: 2.520 ns/day, 9.525 hours/ns, 29.163 timesteps/s
 100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 22.507     | 22.507     | 22.507     |   0.0 | 92.55
-Neigh   | 1.4668     | 1.4668     | 1.4668     |   0.0 |  6.03
-Comm    | 0.062944   | 0.062944   | 0.062944   |   0.0 |  0.26
-Output  | 0.21344    | 0.21344    | 0.21344    |   0.0 |  0.88
-Modify  | 0.056416   | 0.056416   | 0.056416   |   0.0 |  0.23
-Other   |            | 0.01087    |            |       |  0.04
+Pair    | 33.476     | 33.476     | 33.476     |   0.0 | 97.62
+Neigh   | 0.63539    | 0.63539    | 0.63539    |   0.0 |  1.85
+Comm    | 0.02422    | 0.02422    | 0.02422    |   0.0 |  0.07
+Output  | 0.096606   | 0.096606   | 0.096606   |   0.0 |  0.28
+Modify  | 0.052903   | 0.052903   | 0.052903   |   0.0 |  0.15
+Other   |            | 0.005856   |            |       |  0.02
 
 Nlocal:        1254.00 ave        1254 max        1254 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4665.00 ave        4665 max        4665 min
+Nghost:        4586.00 ave        4586 max        4586 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      9380.00 ave        9380 max        9380 min
+FullNghs:      12370.0 ave       12370 max       12370 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 9380
-Ave neighs/atom = 7.4800638
+Total # of neighbors = 12370
+Ave neighs/atom = 9.8644338
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -239,207 +239,63 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 13.3101114743418 ${newy} 31.0
-create_atoms 1 single 13.3101114743418 18.8957252474962 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 15.8698505318455 ${newy} 19.0
+create_atoms 1 single 15.8698505318455 22.0019684727049 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (1.2574594 1.2574594 -13.485081) to (38.742541 38.742541 61.485081)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 1.57915131504332 ${newy2} 31.0
-create_atoms 2 single 1.57915131504332 12.5405190715331 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 2.99111702504979 ${newy2} 19.0
+create_atoms 2 single 2.99111702504979 15.0249601452071 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (1.2574594 1.2574594 -13.485081) to (38.742541 38.742541 61.485081)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.14 | 10.14 | 10.14 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   12043     1015.573   -2244.6353    1853.5273    34.144351    34.144351    68.288702    79613.474 
-   12100    989.42269   -2249.5263    1797.7755    34.144351    34.144351    68.288702    79613.474 
-   12200     999.6262   -2252.2874    1778.7984    34.144351    34.144351    68.288702    79613.474 
-   12300    1001.7139   -2250.0835    1630.0928    34.144351    34.144351    68.288702    79613.474 
-   12400    972.28035   -2246.1049    1565.2357    34.144351    34.144351    68.288702    79613.474 
-   12500    959.29588   -2245.9232    1644.7648    34.144351    34.144351    68.288702    79613.474 
-   12600    1006.3146    -2245.937    1835.3659    34.144351    34.144351    68.288702    79613.474 
-   12700    962.03392   -2256.0854    1960.2506    34.144351    34.144351    68.288702    79613.474 
-   12800    1006.8135    -2249.872    1958.0283    34.144351    34.144351    68.288702    79613.474 
-   12900    1008.5067   -2250.3956    1655.3857    34.144351    34.144351    68.288702    79613.474 
-   13000    998.89264   -2243.4599    1869.4825    34.144351    34.144351    68.288702    79613.474 
-   13043    1008.4634   -2246.3634    1776.4389    34.144351    34.144351    68.288702    79613.474 
-Loop time of 24.4444 on 1 procs for 1000 steps with 1256 atoms
+   12489    989.20411   -2024.9884    2002.6874    37.485081    37.485081    74.970163    105342.92 
+   12500    1184.2633   -2024.0344    -637.2088    37.666703    37.666703    75.333407    106881.57 
+   12600    1015.6194   -2090.0784   -616.44261    37.482382    37.482382    74.964763    105320.16 
+   12700    986.55076   -2096.0557   -80.528711    37.359303    37.359303    74.718607    104286.07 
+   12800    967.26255   -2095.3244    33.218215    37.281177    37.281177    74.562353    103633.18 
+   12900    995.14099   -2088.0443   -40.805815    37.187793    37.187793    74.375587    102856.38 
+   13000    1037.7458   -2083.3644   -1025.6426     37.18209     37.18209     74.36418    102809.06 
+   13100    986.65061   -2099.4596    -342.0305    36.994543    36.994543    73.989085    101261.18 
+   13200    999.35124   -2102.1414    283.59094    36.856726    36.856726    73.713452     100133.7 
+   13300    1007.7259    -2103.035    552.01449    36.789206    36.789206    73.578412    99584.384 
+   13400    1000.1744   -2107.9811    316.94048    36.708658    36.708658    73.417316     98931.71 
+   13489    954.94535   -2113.3647   -1130.5123    36.710247    36.710247    73.420494    98944.559 
+Loop time of 32.3788 on 1 procs for 1000 steps with 1256 atoms
 
-Performance: 3.535 ns/day, 6.790 hours/ns, 40.909 timesteps/s
-99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 22.627     | 22.627     | 22.627     |   0.0 | 92.57
-Neigh   | 1.4423     | 1.4423     | 1.4423     |   0.0 |  5.90
-Comm    | 0.072503   | 0.072503   | 0.072503   |   0.0 |  0.30
-Output  | 0.22469    | 0.22469    | 0.22469    |   0.0 |  0.92
-Modify  | 0.056112   | 0.056112   | 0.056112   |   0.0 |  0.23
-Other   |            | 0.02173    |            |       |  0.09
-
-Nlocal:        1256.00 ave        1256 max        1256 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4662.00 ave        4662 max        4662 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:         0.00000 ave           0 max           0 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      9302.00 ave        9302 max        9302 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-
-Total # of neighbors = 9302
-Ave neighs/atom = 7.4060510
-Neighbor list builds = 100
-Dangerous builds not checked
-#
-#
-#
-next i
-jump in_deposit1_CdTe.lammps loop
-#
-# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
-#
-variable seed equal 12345
-variable newx equal random(xlo,xhi,${seed})
-variable newx equal random(xlo,xhi,12345)
-variable newy equal random(ylo,yhi,${seed})
-variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 19.7093341319151 ${newy} 31.0
-create_atoms 1 single 19.7093341319151 21.3856339003367 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-variable newx2 equal random(xlo,xhi,${seed})
-variable newx2 equal random(xlo,xhi,12345)
-variable newy2 equal random(ylo,yhi,${seed})
-variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 14.2577133832077 ${newy2} 31.0
-create_atoms 2 single 14.2577133832077 21.5393476436112 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
-Step Temp TotEng Press Lx Ly Lz Volume 
-   13043    1006.8589   -2246.9914     1745.862    34.144351    34.144351    68.288702    79613.474 
-   13100    1009.6439   -2242.4124    2204.5027    34.144351    34.144351    68.288702    79613.474 
-   13200     999.6156   -2246.1314    1935.1835    34.144351    34.144351    68.288702    79613.474 
-   13300    990.88117   -2249.2008     2290.585    34.144351    34.144351    68.288702    79613.474 
-   13400    1018.9518   -2246.4087    1554.7821    34.144351    34.144351    68.288702    79613.474 
-   13500    995.60532   -2239.8191    1248.0161    34.144351    34.144351    68.288702    79613.474 
-   13600    1012.1745   -2244.3144    951.55695    34.144351    34.144351    68.288702    79613.474 
-   13700    993.66616   -2248.1965    1041.3644    34.144351    34.144351    68.288702    79613.474 
-   13800    983.42961    -2252.246     617.9674    34.144351    34.144351    68.288702    79613.474 
-   13900    1028.0065   -2249.4322    822.61324    34.144351    34.144351    68.288702    79613.474 
-   14000    1002.8208   -2255.6744    800.41252    34.144351    34.144351    68.288702    79613.474 
-   14043    1010.9285    -2251.625    521.08726    34.144351    34.144351    68.288702    79613.474 
-Loop time of 23.752 on 1 procs for 1000 steps with 1258 atoms
-
-Performance: 3.638 ns/day, 6.598 hours/ns, 42.102 timesteps/s
-99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 21.997     | 21.997     | 21.997     |   0.0 | 92.61
-Neigh   | 1.4008     | 1.4008     | 1.4008     |   0.0 |  5.90
-Comm    | 0.064361   | 0.064361   | 0.064361   |   0.0 |  0.27
-Output  | 0.2194     | 0.2194     | 0.2194     |   0.0 |  0.92
-Modify  | 0.059443   | 0.059443   | 0.059443   |   0.0 |  0.25
-Other   |            | 0.0111     |            |       |  0.05
-
-Nlocal:        1258.00 ave        1258 max        1258 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4667.00 ave        4667 max        4667 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:         0.00000 ave           0 max           0 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8832.00 ave        8832 max        8832 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-
-Total # of neighbors = 8832
-Ave neighs/atom = 7.0206677
-Neighbor list builds = 100
-Dangerous builds not checked
-#
-#
-#
-next i
-jump in_deposit1_CdTe.lammps loop
-#
-# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
-#
-variable seed equal 12345
-variable newx equal random(xlo,xhi,${seed})
-variable newx equal random(xlo,xhi,12345)
-variable newy equal random(ylo,yhi,${seed})
-variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 15.4786456761211 ${newy} 31.0
-create_atoms 1 single 15.4786456761211 10.7722869696874 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-variable newx2 equal random(xlo,xhi,${seed})
-variable newx2 equal random(xlo,xhi,12345)
-variable newy2 equal random(ylo,yhi,${seed})
-variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 17.7074796898862 ${newy2} 31.0
-create_atoms 2 single 17.7074796898862 1.95413803608144 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
-Step Temp TotEng Press Lx Ly Lz Volume 
-   14043    1009.3226   -2252.9999    599.56545    34.144351    34.144351    68.288702    79613.474 
-   14100    965.07009   -2250.4267    691.99359    34.144351    34.144351    68.288702    79613.474 
-   14200    1005.0596   -2244.2852    178.78664    34.144351    34.144351    68.288702    79613.474 
-   14300    1010.4651   -2250.1047     -383.991    34.144351    34.144351    68.288702    79613.474 
-   14400    983.62268   -2246.9046   -492.33754    34.144351    34.144351    68.288702    79613.474 
-   14500    988.86063   -2253.6737   -583.08882    34.144351    34.144351    68.288702    79613.474 
-   14600    1018.4514   -2258.1868    -292.2532    34.144351    34.144351    68.288702    79613.474 
-   14700    989.67234   -2262.4765   -573.12855    34.144351    34.144351    68.288702    79613.474 
-   14800    978.40767   -2254.6202   -508.06594    34.144351    34.144351    68.288702    79613.474 
-   14900    1024.4574   -2238.4755    26.695775    34.144351    34.144351    68.288702    79613.474 
-   15000    1010.6485   -2240.4864   -215.56907    34.144351    34.144351    68.288702    79613.474 
-   15043    1019.3556      -2242.4   -31.847394    34.144351    34.144351    68.288702    79613.474 
-Loop time of 23.0628 on 1 procs for 1000 steps with 1260 atoms
-
-Performance: 3.746 ns/day, 6.406 hours/ns, 43.360 timesteps/s
+Performance: 2.668 ns/day, 8.994 hours/ns, 30.884 timesteps/s
 100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 21.298     | 21.298     | 21.298     |   0.0 | 92.35
-Neigh   | 1.4126     | 1.4126     | 1.4126     |   0.0 |  6.13
-Comm    | 0.063368   | 0.063368   | 0.063368   |   0.0 |  0.27
-Output  | 0.20843    | 0.20843    | 0.20843    |   0.0 |  0.90
-Modify  | 0.069443   | 0.069443   | 0.069443   |   0.0 |  0.30
-Other   |            | 0.01121    |            |       |  0.05
+Pair    | 31.554     | 31.554     | 31.554     |   0.0 | 97.45
+Neigh   | 0.6494     | 0.6494     | 0.6494     |   0.0 |  2.01
+Comm    | 0.02723    | 0.02723    | 0.02723    |   0.0 |  0.08
+Output  | 0.090692   | 0.090692   | 0.090692   |   0.0 |  0.28
+Modify  | 0.051756   | 0.051756   | 0.051756   |   0.0 |  0.16
+Other   |            | 0.005936   |            |       |  0.02
 
-Nlocal:        1260.00 ave        1260 max        1260 min
+Nlocal:        1256.00 ave        1256 max        1256 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4679.00 ave        4679 max        4679 min
+Nghost:        4625.00 ave        4625 max        4625 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8824.00 ave        8824 max        8824 min
+FullNghs:      11516.0 ave       11516 max       11516 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 8824
-Ave neighs/atom = 7.0031746
+Total # of neighbors = 11516
+Ave neighs/atom = 9.1687898
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -455,63 +311,63 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 9.48475807386423 ${newy} 31.0
-create_atoms 1 single 9.48475807386423 9.9310039537289 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 22.8353372038891 ${newy} 19.0
+create_atoms 1 single 22.8353372038891 24.6376083598797 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (1.6448765 1.6448765 -12.710247) to (38.355124 38.355124 60.710247)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 8.15558976553204 ${newy2} 31.0
-create_atoms 2 single 8.15558976553204 1.58448140406391 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 16.9740354165324 ${newy2} 19.0
+create_atoms 2 single 16.9740354165324 24.8028734580451 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (1.6448765 1.6448765 -12.710247) to (38.355124 38.355124 60.710247)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.14 | 10.14 | 10.14 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   15043    1017.7389   -2242.6684    -46.02976    34.144351    34.144351    68.288702    79613.474 
-   15100    997.42332   -2257.0752   -446.25951    34.144351    34.144351    68.288702    79613.474 
-   15200    992.64142   -2262.7832   -370.59303    34.144351    34.144351    68.288702    79613.474 
-   15300     1018.407   -2257.6345   -367.05417    34.144351    34.144351    68.288702    79613.474 
-   15400     967.9788   -2262.6025   -842.88884    34.144351    34.144351    68.288702    79613.474 
-   15500    1030.4065   -2247.6786    -502.8777    34.144351    34.144351    68.288702    79613.474 
-   15600    996.23057   -2256.7213   -951.39358    34.144351    34.144351    68.288702    79613.474 
-   15700    1019.7111     -2256.57   -233.16011    34.144351    34.144351    68.288702    79613.474 
-   15800    999.18057   -2265.0422   -364.50424    34.144351    34.144351    68.288702    79613.474 
-   15900    1025.0906   -2255.2884   -357.96197    34.144351    34.144351    68.288702    79613.474 
-   16000    1017.0131   -2256.1308   -50.838894    34.144351    34.144351    68.288702    79613.474 
-   16043    1010.7901    -2258.675    99.871739    34.144351    34.144351    68.288702    79613.474 
-Loop time of 21.5407 on 1 procs for 1000 steps with 1262 atoms
+   13489    953.42594   -1670.3391    6253.4652    36.710247    36.710247    73.420494    98944.559 
+   13500    1949.4859    -1873.293   -1248.1653    37.015753    37.015753    74.031507    101435.45 
+   13600    1016.1342   -2144.8824   -590.54115    36.593517    36.593517    73.187035    98003.698 
+   13700    1044.6035   -2133.0442    1766.2048    36.456381    36.456381    72.912761    96905.995 
+   13800    1052.8051   -2120.6806    285.08586     36.45548     36.45548    72.910961    96898.816 
+   13900    1011.1665   -2114.3784    -1003.043    36.512662    36.512662    73.025324    97355.498 
+   14000    967.01823   -2115.7108   -157.46749    36.404232    36.404232    72.808465    96490.739 
+   14100    1005.5335   -2112.8908    218.27725    36.318062    36.318062    72.636124    95807.164 
+   14200    1022.7251   -2112.9457    2245.6813    36.147721    36.147721    72.295442    94465.399 
+   14300    962.62691   -2116.2923    481.88593    36.236283    36.236283    72.472567    95161.425 
+   14400    957.29484   -2103.1361    602.24975    36.231179    36.231179    72.462357    95121.213 
+   14489    989.34075   -2095.9231   -429.05977    36.260482    36.260482    72.520964    95352.199 
+Loop time of 30.1449 on 1 procs for 1000 steps with 1258 atoms
 
-Performance: 4.011 ns/day, 5.984 hours/ns, 46.424 timesteps/s
-99.6% CPU use with 1 MPI tasks x 1 OpenMP threads
+Performance: 2.866 ns/day, 8.374 hours/ns, 33.173 timesteps/s
+99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 19.672     | 19.672     | 19.672     |   0.0 | 91.32
-Neigh   | 1.4566     | 1.4566     | 1.4566     |   0.0 |  6.76
-Comm    | 0.062723   | 0.062723   | 0.062723   |   0.0 |  0.29
-Output  | 0.28271    | 0.28271    | 0.28271    |   0.0 |  1.31
-Modify  | 0.055958   | 0.055958   | 0.055958   |   0.0 |  0.26
-Other   |            | 0.01082    |            |       |  0.05
+Pair    | 29.334     | 29.334     | 29.334     |   0.0 | 97.31
+Neigh   | 0.63386    | 0.63386    | 0.63386    |   0.0 |  2.10
+Comm    | 0.024616   | 0.024616   | 0.024616   |   0.0 |  0.08
+Output  | 0.095827   | 0.095827   | 0.095827   |   0.0 |  0.32
+Modify  | 0.050809   | 0.050809   | 0.050809   |   0.0 |  0.17
+Other   |            | 0.00599    |            |       |  0.02
 
-Nlocal:        1262.00 ave        1262 max        1262 min
+Nlocal:        1258.00 ave        1258 max        1258 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4664.00 ave        4664 max        4664 min
+Nghost:        4687.00 ave        4687 max        4687 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8798.00 ave        8798 max        8798 min
+FullNghs:      11456.0 ave       11456 max       11456 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 8798
-Ave neighs/atom = 6.9714739
+Total # of neighbors = 11456
+Ave neighs/atom = 9.1065183
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -527,63 +383,207 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 20.6425494812978 ${newy} 31.0
-create_atoms 1 single 20.6425494812978 9.20256252457278 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 18.3077096251014 ${newy} 19.0
+create_atoms 1 single 18.3077096251014 13.3096695067468 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (1.8697590 1.8697590 -12.260482) to (38.130241 38.130241 60.260482)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 7.54915629238358 ${newy2} 31.0
-create_atoms 2 single 7.54915629238358 13.6429845901478 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 20.6746779147736 ${newy2} 19.0
+create_atoms 2 single 20.6746779147736 3.94500674112747 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (1.8697590 1.8697590 -12.260482) to (38.130241 38.130241 60.260482)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.14 | 10.14 | 10.14 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   16043    1009.1895   -2256.7228    459.04953    34.144351    34.144351    68.288702    79613.474 
-   16100    1033.7941   -2260.5751     354.6726    34.144351    34.144351    68.288702    79613.474 
-   16200    979.61589   -2274.7147    436.58584    34.144351    34.144351    68.288702    79613.474 
-   16300    1018.2888   -2268.5636    152.59597    34.144351    34.144351    68.288702    79613.474 
-   16400    969.50398   -2273.2232    469.09555    34.144351    34.144351    68.288702    79613.474 
-   16500    1053.4579   -2260.9784      1087.13    34.144351    34.144351    68.288702    79613.474 
-   16600    992.97518   -2275.6337    1214.3219    34.144351    34.144351    68.288702    79613.474 
-   16700    1005.5177   -2274.3516    1111.8864    34.144351    34.144351    68.288702    79613.474 
-   16800    991.24699   -2267.9807    1338.4031    34.144351    34.144351    68.288702    79613.474 
-   16900    990.63497   -2265.5406    1194.6266    34.144351    34.144351    68.288702    79613.474 
-   17000    979.75036   -2267.1411    1785.7309    34.144351    34.144351    68.288702    79613.474 
-   17043    995.82794    -2272.305    1709.6285    34.144351    34.144351    68.288702    79613.474 
-Loop time of 23.129 on 1 procs for 1000 steps with 1264 atoms
+   14489    987.76912   -2080.6891    463.73241    36.260482    36.260482    72.520964    95352.199 
+   14500     1021.774    -2077.554     -309.992    36.306448    36.306448    72.612897    95715.285 
+   14600    1003.8906   -2079.9365    -60.17904    36.220303    36.220303    72.440606    95035.579 
+   14700    986.91201   -2073.4818    1591.1912    36.057468    36.057468    72.114936    93759.587 
+   14800    992.84227   -2077.9559    1519.6268    35.976086    35.976086    71.952173    93126.171 
+   14900     986.2026    -2087.292    329.47779    35.957986    35.957986    71.915972     92985.68 
+   15000    1038.3714    -2073.709    12.843107    35.947153    35.947153    71.894306    92901.666 
+   15100    943.76769   -2093.4218   -417.44807     35.88888     35.88888     71.77776    92450.596 
+   15200    1021.0944   -2078.6703   -1181.9113    35.881793    35.881793    71.763586    92395.838 
+   15300    1022.5704   -2083.2798   -1421.7368    35.868341    35.868341    71.736683    92291.963 
+   15400    970.73245   -2092.5516   -1091.4582     35.80288     35.80288    71.605761    91787.576 
+   15489    996.39422   -2088.2331    1104.0843    35.647989    35.647989    71.295979    90601.444 
+Loop time of 31.8866 on 1 procs for 1000 steps with 1260 atoms
 
-Performance: 3.736 ns/day, 6.425 hours/ns, 43.236 timesteps/s
+Performance: 2.710 ns/day, 8.857 hours/ns, 31.361 timesteps/s
+99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 31.016     | 31.016     | 31.016     |   0.0 | 97.27
+Neigh   | 0.68826    | 0.68826    | 0.68826    |   0.0 |  2.16
+Comm    | 0.024533   | 0.024533   | 0.024533   |   0.0 |  0.08
+Output  | 0.10088    | 0.10088    | 0.10088    |   0.0 |  0.32
+Modify  | 0.050595   | 0.050595   | 0.050595   |   0.0 |  0.16
+Other   |            | 0.006208   |            |       |  0.02
+
+Nlocal:        1260.00 ave        1260 max        1260 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        4670.00 ave        4670 max        4670 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      11808.0 ave       11808 max       11808 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 11808
+Ave neighs/atom = 9.3714286
+Neighbor list builds = 100
+Dangerous builds not checked
+#
+#
+#
+next i
+jump in_deposit1_CdTe.lammps loop
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
+#
+variable seed equal 12345
+variable newx equal random(xlo,xhi,${seed})
+variable newx equal random(xlo,xhi,12345)
+variable newy equal random(ylo,yhi,${seed})
+variable newy equal random(ylo,yhi,12345)
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 12.0784502576643 ${newy} 19.0
+create_atoms 1 single 12.0784502576643 12.544347779582 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.1760053 2.1760053 -11.647989) to (37.823995 37.823995 59.647989)
+  create_atoms CPU = 0.000 seconds
+variable newx2 equal random(xlo,xhi,${seed})
+variable newx2 equal random(xlo,xhi,12345)
+variable newy2 equal random(ylo,yhi,${seed})
+variable newy2 equal random(ylo,yhi,12345)
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 10.6907484345099 ${newy2} 19.0
+create_atoms 2 single 10.6907484345099 3.83026357627768 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.1760053 2.1760053 -11.647989) to (37.823995 37.823995 59.647989)
+  create_atoms CPU = 0.000 seconds
+run 1000
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   15489    994.81389   -1962.6623    4300.4401    35.647989    35.647989    71.295979    90601.444 
+   15500    1400.4038   -1995.5842   -1516.3517    35.954413    35.954413    71.908825     92957.96 
+   15600    990.33882     -2105.36   -2277.7814    35.889822    35.889822    71.779644    92457.876 
+   15700    959.07055   -2108.3767   -1317.0809    35.799052    35.799052    71.598104    91758.136 
+   15800    1007.5836   -2087.4805   -792.86442    35.747411    35.747411    71.494822    91361.617 
+   15900    1008.1418    -2085.018   -1500.6287    35.703478    35.703478    71.406956    91025.184 
+   16000    987.53894   -2090.7729   -694.92532    35.602983    35.602983    71.205967     90258.72 
+   16100     977.5001    -2088.429   -226.76111    35.536038    35.536038    71.072076    89750.527 
+   16200    1027.7537   -2077.9757     757.5693     35.43643     35.43643    70.872859    88997.923 
+   16300    985.68145   -2063.8692    1340.6954    35.432866    35.432866    70.865732    88971.076 
+   16400    1020.7995   -2068.2755   -436.45186    35.474019    35.474019    70.948038    89281.437 
+   16489    1039.7909   -2077.4719     2939.322    35.217635    35.217635    70.435269    87359.582 
+Loop time of 33.2322 on 1 procs for 1000 steps with 1262 atoms
+
+Performance: 2.600 ns/day, 9.231 hours/ns, 30.091 timesteps/s
 99.7% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 21.225     | 21.225     | 21.225     |   0.0 | 91.77
-Neigh   | 1.5249     | 1.5249     | 1.5249     |   0.0 |  6.59
-Comm    | 0.077274   | 0.077274   | 0.077274   |   0.0 |  0.33
-Output  | 0.22464    | 0.22464    | 0.22464    |   0.0 |  0.97
-Modify  | 0.064425   | 0.064425   | 0.064425   |   0.0 |  0.28
-Other   |            | 0.01236    |            |       |  0.05
+Pair    | 32.317     | 32.317     | 32.317     |   0.0 | 97.25
+Neigh   | 0.71524    | 0.71524    | 0.71524    |   0.0 |  2.15
+Comm    | 0.027126   | 0.027126   | 0.027126   |   0.0 |  0.08
+Output  | 0.1106     | 0.1106     | 0.1106     |   0.0 |  0.33
+Modify  | 0.053378   | 0.053378   | 0.053378   |   0.0 |  0.16
+Other   |            | 0.008536   |            |       |  0.03
+
+Nlocal:        1262.00 ave        1262 max        1262 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        4707.00 ave        4707 max        4707 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      11794.0 ave       11794 max       11794 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 11794
+Ave neighs/atom = 9.3454834
+Neighbor list builds = 100
+Dangerous builds not checked
+#
+#
+#
+next i
+jump in_deposit1_CdTe.lammps loop
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
+#
+variable seed equal 12345
+variable newx equal random(xlo,xhi,${seed})
+variable newx equal random(xlo,xhi,12345)
+variable newy equal random(ylo,yhi,${seed})
+variable newy equal random(ylo,yhi,12345)
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 23.6826042001482 ${newy} 19.0
+create_atoms 1 single 23.6826042001482 11.8830159286702 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.3911827 2.3911827 -11.217635) to (37.608817 37.608817 59.217635)
+  create_atoms CPU = 0.000 seconds
+variable newx2 equal random(xlo,xhi,${seed})
+variable newx2 equal random(xlo,xhi,12345)
+variable newy2 equal random(ylo,yhi,${seed})
+variable newy2 equal random(ylo,yhi,12345)
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 10.177636992564 ${newy2} 19.0
+create_atoms 2 single 10.177636992564 16.4630169656968 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.3911827 2.3911827 -11.217635) to (37.608817 37.608817 59.217635)
+  create_atoms CPU = 0.000 seconds
+run 1000
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   16489    1038.1444   -1984.2223    5480.8614    35.217635    35.217635    70.435269    87359.582 
+   16500    1303.7232   -2008.5354    -1522.807    35.608542    35.608542    71.217083        90301 
+   16600     1016.938   -2088.0697   -299.34547    35.448897    35.448897    70.897794    89091.892 
+   16700    998.62874   -2071.9508    906.75788    35.460068    35.460068    70.920136    89176.145 
+   16800    1011.7931   -2060.9154    419.74288    35.435672    35.435672    70.871344    88992.216 
+   16900    1009.6099   -2061.6755   -737.68176    35.458277    35.458277    70.916554    89162.633 
+   17000    970.26315   -2063.9205    191.40473    35.339893    35.339893    70.679786    88272.552 
+   17100    994.37114   -2063.6556     353.6989    35.274845    35.274845     70.54969    87786.016 
+   17200    1028.8249   -2045.6765   -489.23855    35.338738    35.338738    70.677475    88263.896 
+   17300    1034.5069   -2047.2265    1374.1269    35.144936    35.144936    70.289872    86819.698 
+   17400    943.41443   -2065.2185   -975.44231    35.226936    35.226936    70.453873    87428.821 
+   17489    981.00061   -2061.0093   -1653.0327    35.296164    35.296164    70.592327    87945.274 
+Loop time of 32.478 on 1 procs for 1000 steps with 1264 atoms
+
+Performance: 2.660 ns/day, 9.022 hours/ns, 30.790 timesteps/s
+99.5% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 31.65      | 31.65      | 31.65      |   0.0 | 97.45
+Neigh   | 0.64803    | 0.64803    | 0.64803    |   0.0 |  2.00
+Comm    | 0.02881    | 0.02881    | 0.02881    |   0.0 |  0.09
+Output  | 0.092469   | 0.092469   | 0.092469   |   0.0 |  0.28
+Modify  | 0.052427   | 0.052427   | 0.052427   |   0.0 |  0.16
+Other   |            | 0.006705   |            |       |  0.02
 
 Nlocal:        1264.00 ave        1264 max        1264 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4671.00 ave        4671 max        4671 min
+Nghost:        4688.00 ave        4688 max        4688 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      9012.00 ave        9012 max        9012 min
+FullNghs:      11384.0 ave       11384 max       11384 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 9012
-Ave neighs/atom = 7.1297468
+Total # of neighbors = 11384
+Ave neighs/atom = 9.0063291
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -599,63 +599,63 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 4.546977037263 ${newy} 31.0
-create_atoms 1 single 4.546977037263 25.1613598778411 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 7.05228126497931 ${newy} 19.0
+create_atoms 1 single 7.05228126497931 28.3620619944258 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.3519182 2.3519182 -11.296164) to (37.648082 37.648082 59.296164)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 0.374512528315021 ${newy2} 31.0
-create_atoms 2 single 0.374512528315021 10.3965879419837 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 2.73906439718849 ${newy2} 19.0
+create_atoms 2 single 2.73906439718849 13.0992207584481 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.3519182 2.3519182 -11.296164) to (37.648082 37.648082 59.296164)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   17043    994.25351   -2272.6541    1688.8523    34.144351    34.144351    68.288702    79613.474 
-   17100    991.82213   -2273.3761    1884.5249    34.144351    34.144351    68.288702    79613.474 
-   17200    1023.9686   -2265.5991    1865.3025    34.144351    34.144351    68.288702    79613.474 
-   17300    977.18318   -2271.3446    1739.3495    34.144351    34.144351    68.288702    79613.474 
-   17400    1011.3541   -2261.0745    1820.4826    34.144351    34.144351    68.288702    79613.474 
-   17500    1013.5316   -2265.4381    1656.5438    34.144351    34.144351    68.288702    79613.474 
-   17600    980.00241   -2274.4668    2333.6953    34.144351    34.144351    68.288702    79613.474 
-   17700    960.77904   -2271.9902    2118.6801    34.144351    34.144351    68.288702    79613.474 
-   17800    1006.0285   -2267.5716    2285.6107    34.144351    34.144351    68.288702    79613.474 
-   17900    982.89392   -2272.2742    2364.0158    34.144351    34.144351    68.288702    79613.474 
-   18000    1016.2097   -2272.0741    2348.7556    34.144351    34.144351    68.288702    79613.474 
-   18043    1033.9978   -2273.8306    1940.4599    34.144351    34.144351    68.288702    79613.474 
-Loop time of 23.3781 on 1 procs for 1000 steps with 1266 atoms
+   17489    979.44962   -2037.9124    -520.0615    35.296164    35.296164    70.592327    87945.274 
+   17500    1078.2195   -2033.4132    645.45431    35.221117    35.221117    70.442234    87385.499 
+   17600    1012.0647   -2065.7315   -504.56526     35.27952     35.27952     70.55904    87820.922 
+   17700    978.35049    -2063.884    376.64705    35.207633    35.207633    70.415267    87285.177 
+   17800    1026.7263   -2053.0692    -1260.831    35.297029    35.297029    70.594058    87951.742 
+   17900    1019.7757   -2051.5233    277.26415    35.169281    35.169281    70.338562    87000.243 
+   18000    986.87675   -2049.1261   -408.56673    35.191641    35.191641    70.383281    87166.285 
+   18100    1016.6175    -2053.392    455.48119    35.117811    35.117811    70.235621    86618.827 
+   18200    1002.7728   -2054.0963   -347.77528    35.152805    35.152805    70.305611     86878.03 
+   18300    963.94986   -2065.6077   -129.91335    35.088523    35.088523    70.177045    86402.289 
+   18400    1002.3001   -2060.3879    944.99491     35.06635     35.06635    70.132701      86238.6 
+   18489    1004.9853   -2063.6037     918.0537     35.07267     35.07267    70.145339    86285.231 
+Loop time of 30.291 on 1 procs for 1000 steps with 1266 atoms
 
-Performance: 3.696 ns/day, 6.494 hours/ns, 42.775 timesteps/s
-99.8% CPU use with 1 MPI tasks x 1 OpenMP threads
+Performance: 2.852 ns/day, 8.414 hours/ns, 33.013 timesteps/s
+100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 21.55      | 21.55      | 21.55      |   0.0 | 92.18
-Neigh   | 1.4674     | 1.4674     | 1.4674     |   0.0 |  6.28
-Comm    | 0.0641     | 0.0641     | 0.0641     |   0.0 |  0.27
-Output  | 0.22724    | 0.22724    | 0.22724    |   0.0 |  0.97
-Modify  | 0.0568     | 0.0568     | 0.0568     |   0.0 |  0.24
-Other   |            | 0.01214    |            |       |  0.05
+Pair    | 29.504     | 29.504     | 29.504     |   0.0 | 97.40
+Neigh   | 0.62256    | 0.62256    | 0.62256    |   0.0 |  2.06
+Comm    | 0.023281   | 0.023281   | 0.023281   |   0.0 |  0.08
+Output  | 0.085462   | 0.085462   | 0.085462   |   0.0 |  0.28
+Modify  | 0.050348   | 0.050348   | 0.050348   |   0.0 |  0.17
+Other   |            | 0.005856   |            |       |  0.02
 
 Nlocal:        1266.00 ave        1266 max        1266 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4659.00 ave        4659 max        4659 min
+Nghost:        4692.00 ave        4692 max        4692 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8950.00 ave        8950 max        8950 min
+FullNghs:      11370.0 ave       11370 max       11370 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 8950
-Ave neighs/atom = 7.0695103
+Total # of neighbors = 11370
+Ave neighs/atom = 8.9810427
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -671,63 +671,63 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 4.95137795326657 ${newy} 31.0
-create_atoms 1 single 4.95137795326657 31.7204160105273 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 7.54966155789977 ${newy} 19.0
+create_atoms 1 single 7.54966155789977 35.0464978652512 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.4636652 2.4636652 -11.072670) to (37.536335 37.536335 59.072670)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 26.6653791209589 ${newy2} 31.0
-create_atoms 2 single 26.6653791209589 29.5185336458266 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 29.8540243223932 ${newy2} 19.0
+create_atoms 2 single 29.8540243223932 32.7847505876423 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.4636652 2.4636652 -11.072670) to (37.536335 37.536335 59.072670)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   18043    1032.3656   -2274.5952    1930.0174    34.144351    34.144351    68.288702    79613.474 
-   18100    1004.6956   -2266.1819    2203.7156    34.144351    34.144351    68.288702    79613.474 
-   18200    1019.4421   -2257.1243    2019.2097    34.144351    34.144351    68.288702    79613.474 
-   18300    1042.4867   -2259.6181    2226.3724    34.144351    34.144351    68.288702    79613.474 
-   18400    967.22095   -2279.6569    1888.7358    34.144351    34.144351    68.288702    79613.474 
-   18500    1015.1632   -2267.3381    1767.2731    34.144351    34.144351    68.288702    79613.474 
-   18600    986.57015   -2273.3413    1481.2963    34.144351    34.144351    68.288702    79613.474 
-   18700    992.18688   -2277.1642    1166.9794    34.144351    34.144351    68.288702    79613.474 
-   18800    1035.3403   -2266.0626    1235.2401    34.144351    34.144351    68.288702    79613.474 
-   18900    1025.2898   -2275.8425    734.72597    34.144351    34.144351    68.288702    79613.474 
-   19000    972.93422   -2283.5429    383.49688    34.144351    34.144351    68.288702    79613.474 
-   19043    928.43783   -2287.5117    202.17968    34.144351    34.144351    68.288702    79613.474 
-Loop time of 24.7617 on 1 procs for 1000 steps with 1268 atoms
+   18489    1003.3989   -2020.5411    2420.0043     35.07267     35.07267    70.145339    86285.231 
+   18500    1109.3146   -2030.4092   -1143.3329    35.265494    35.265494    70.530989    87716.224 
+   18600    991.96949     -2073.11    2412.3892    34.992623    34.992623    69.985245    85695.788 
+   18700    982.70502   -2077.8501     -1060.89    35.179395    35.179395    70.358789     87075.32 
+   18800    1000.9473    -2062.985    899.06666    35.040824    35.040824    70.081648    86050.406 
+   18900    986.72256   -2065.9145   -2082.8738    35.191677    35.191677    70.383353    87166.553 
+   19000    1019.0704   -2055.7842    928.68787    35.014364    35.014364    70.028727    85855.615 
+   19100    963.25358   -2054.9331   -382.19637    35.093631    35.093631    70.187262     86440.03 
+   19200    975.50781   -2056.0097   -408.10581      35.0482      35.0482      70.0964     86104.76 
+   19300    1033.3264   -2050.8686    289.02521    35.011056    35.011056    70.022113     85831.29 
+   19400    981.21854   -2055.0003   -605.24918    35.047968    35.047968    70.095936    86103.048 
+   19489    970.91829   -2064.9675    126.41058    34.970712    34.970712    69.941424    85534.915 
+Loop time of 31.7363 on 1 procs for 1000 steps with 1268 atoms
 
-Performance: 3.489 ns/day, 6.878 hours/ns, 40.385 timesteps/s
-99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
+Performance: 2.722 ns/day, 8.816 hours/ns, 31.510 timesteps/s
+100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 22.859     | 22.859     | 22.859     |   0.0 | 92.32
-Neigh   | 1.5145     | 1.5145     | 1.5145     |   0.0 |  6.12
-Comm    | 0.065348   | 0.065348   | 0.065348   |   0.0 |  0.26
-Output  | 0.24619    | 0.24619    | 0.24619    |   0.0 |  0.99
-Modify  | 0.064154   | 0.064154   | 0.064154   |   0.0 |  0.26
-Other   |            | 0.01264    |            |       |  0.05
+Pair    | 30.874     | 30.874     | 30.874     |   0.0 | 97.28
+Neigh   | 0.66747    | 0.66747    | 0.66747    |   0.0 |  2.10
+Comm    | 0.026742   | 0.026742   | 0.026742   |   0.0 |  0.08
+Output  | 0.10667    | 0.10667    | 0.10667    |   0.0 |  0.34
+Modify  | 0.055494   | 0.055494   | 0.055494   |   0.0 |  0.17
+Other   |            | 0.006339   |            |       |  0.02
 
 Nlocal:        1268.00 ave        1268 max        1268 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4686.00 ave        4686 max        4686 min
+Nghost:        4723.00 ave        4723 max        4723 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8874.00 ave        8874 max        8874 min
+FullNghs:      11268.0 ave       11268 max       11268 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 8874
-Ave neighs/atom = 6.9984227
+Total # of neighbors = 11268
+Ave neighs/atom = 8.8864353
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -743,63 +743,63 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 4.07577396699762 ${newy} 31.0
-create_atoms 1 single 4.07577396699762 22.6296673159965 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 6.68905971888404 ${newy} 19.0
+create_atoms 1 single 6.68905971888404 25.6919942953392 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.5146439 2.5146439 -10.970712) to (37.485356 37.485356 58.970712)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 14.7396987412283 ${newy2} 31.0
-create_atoms 2 single 14.7396987412283 6.15077212777416 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 17.6110727433838 ${newy2} 19.0
+create_atoms 2 single 17.6110727433838 8.81427697403383 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.5146439 2.5146439 -10.970712) to (37.485356 37.485356 58.970712)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   19043    926.97457   -2288.0683    180.45797    34.144351    34.144351    68.288702    79613.474 
-   19100    1033.5096   -2272.7569    219.81669    34.144351    34.144351    68.288702    79613.474 
-   19200    1022.9881   -2268.8898    14.291197    34.144351    34.144351    68.288702    79613.474 
-   19300     1023.039   -2268.4002   -4.5463827    34.144351    34.144351    68.288702    79613.474 
-   19400    1004.4865   -2275.0614    103.65151    34.144351    34.144351    68.288702    79613.474 
-   19500    947.97146   -2294.9641   -167.03994    34.144351    34.144351    68.288702    79613.474 
-   19600     1023.888    -2281.464   -190.25593    34.144351    34.144351    68.288702    79613.474 
-   19700    977.89206   -2277.9558    45.593837    34.144351    34.144351    68.288702    79613.474 
-   19800    1018.7998   -2267.8615    154.25565    34.144351    34.144351    68.288702    79613.474 
-   19900    995.55848   -2269.8899    258.50303    34.144351    34.144351    68.288702    79613.474 
-   20000    1045.8465   -2266.5269    61.207459    34.144351    34.144351    68.288702    79613.474 
-   20043    996.55862   -2282.8083   -245.22113    34.144351    34.144351    68.288702    79613.474 
-Loop time of 24.3749 on 1 procs for 1000 steps with 1270 atoms
+   19489    969.38808   -2031.1977    1493.5032    34.970712    34.970712    69.941424    85534.915 
+   19500    1102.9594   -2027.5356   -2108.0298     35.18506     35.18506    70.370121    87117.398 
+   19600    1018.9726   -2059.7429    158.25099    35.032004    35.032004    70.064007    85985.441 
+   19700    1009.0119   -2071.0439    1051.2373    34.987701    34.987701    69.975402    85659.632 
+   19800    988.26853   -2069.3843   -2414.9245    35.212852    35.212852    70.425703    87323.993 
+   19900    985.35488    -2065.522    1187.6635    34.950338    34.950338    69.900677    85385.505 
+   20000    979.06354   -2056.6401   -98.532623    35.044824    35.044824    70.089648    86079.878 
+   20100    999.51436   -2056.1296   -680.01876    35.008629    35.008629    70.017259    85813.441 
+   20200    1005.5985   -2069.4177    1554.3367    34.844039    34.844039    69.688078    84608.788 
+   20300    996.11759   -2066.2007   -1080.0339    34.994355    34.994355    69.988709    85708.513 
+   20400    1014.5411   -2064.7698    1057.8664    34.830187    34.830187    69.660375    84507.924 
+   20489      1007.01   -2065.3698     1930.025     34.78432     34.78432     69.56864    84174.501 
+Loop time of 29.5122 on 1 procs for 1000 steps with 1270 atoms
 
-Performance: 3.545 ns/day, 6.771 hours/ns, 41.026 timesteps/s
-99.8% CPU use with 1 MPI tasks x 1 OpenMP threads
+Performance: 2.928 ns/day, 8.198 hours/ns, 33.884 timesteps/s
+99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 22.406     | 22.406     | 22.406     |   0.0 | 91.92
-Neigh   | 1.5786     | 1.5786     | 1.5786     |   0.0 |  6.48
-Comm    | 0.065351   | 0.065351   | 0.065351   |   0.0 |  0.27
-Output  | 0.24535    | 0.24535    | 0.24535    |   0.0 |  1.01
-Modify  | 0.068203   | 0.068203   | 0.068203   |   0.0 |  0.28
-Other   |            | 0.01185    |            |       |  0.05
+Pair    | 28.663     | 28.663     | 28.663     |   0.0 | 97.12
+Neigh   | 0.6779     | 0.6779     | 0.6779     |   0.0 |  2.30
+Comm    | 0.025653   | 0.025653   | 0.025653   |   0.0 |  0.09
+Output  | 0.089137   | 0.089137   | 0.089137   |   0.0 |  0.30
+Modify  | 0.050386   | 0.050386   | 0.050386   |   0.0 |  0.17
+Other   |            | 0.006362   |            |       |  0.02
 
 Nlocal:        1270.00 ave        1270 max        1270 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4735.00 ave        4735 max        4735 min
+Nghost:        4753.00 ave        4753 max        4753 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8804.00 ave        8804 max        8804 min
+FullNghs:      11268.0 ave       11268 max       11268 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 8804
-Ave neighs/atom = 6.9322835
+Total # of neighbors = 11268
+Ave neighs/atom = 8.8724409
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -815,63 +815,135 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 14.0907181733627 ${newy} 31.0
-create_atoms 1 single 14.0907181733627 22.2634969163166 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 16.9626611634484 ${newy} 19.0
+create_atoms 1 single 16.9626611634484 25.2886227011416 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.6078400 2.6078400 -10.784320) to (37.392160 37.392160 58.784320)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 10.2517271529817 ${newy2} 31.0
-create_atoms 2 single 10.2517271529817 16.3338675159444 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 13.0517157451844 ${newy2} 19.0
+create_atoms 2 single 13.0517157451844 19.2478539647021 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.6078400 2.6078400 -10.784320) to (37.392160 37.392160 58.784320)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   20043    994.99047   -2282.4609   -72.843878    34.144351    34.144351    68.288702    79613.474 
-   20100    963.63346   -2289.8918    141.77065    34.144351    34.144351    68.288702    79613.474 
-   20200    987.70001   -2288.4134   -467.96878    34.144351    34.144351    68.288702    79613.474 
-   20300    1026.6215   -2273.9142   -185.83763    34.144351    34.144351    68.288702    79613.474 
-   20400    965.77278   -2280.4645    -301.4765    34.144351    34.144351    68.288702    79613.474 
-   20500    993.98994   -2279.1938   -544.58603    34.144351    34.144351    68.288702    79613.474 
-   20600    998.73947   -2289.3727   -484.49585    34.144351    34.144351    68.288702    79613.474 
-   20700    1016.4732   -2288.7277   -1069.4495    34.144351    34.144351    68.288702    79613.474 
-   20800    1040.0972   -2280.1865   -573.96784    34.144351    34.144351    68.288702    79613.474 
-   20900    994.60972   -2287.2513   -545.61878    34.144351    34.144351    68.288702    79613.474 
-   21000    976.33718   -2287.4386   -368.66322    34.144351    34.144351    68.288702    79613.474 
-   21043    995.76089   -2276.6654    56.591541    34.144351    34.144351    68.288702    79613.474 
-Loop time of 22.2759 on 1 procs for 1000 steps with 1272 atoms
+   20489    1005.4254   -2045.9438    2947.2346     34.78432     34.78432     69.56864    84174.501 
+   20500    1041.3564    -2045.902   -807.12508     35.01015     35.01015    70.020299    85824.621 
+   20600    999.77073   -2077.7775   -266.00386     34.88277     34.88277    69.765539    84891.239 
+   20700    995.08325   -2085.6548    131.63222    34.830324    34.830324    69.660648    84508.919 
+   20800    987.70936   -2079.6927   -268.35047    34.902336    34.902336    69.804671    85034.169 
+   20900     978.9991   -2082.3766    259.76585    34.809631    34.809631    69.619261    84358.382 
+   21000    968.93323   -2083.5072   -830.16593    34.902866    34.902866    69.805732    85038.043 
+   21100    1033.7065   -2066.1133    1103.0223    34.795841    34.795841    69.591682    84258.168 
+   21200    992.37135   -2079.2291   -1049.5548    34.863123    34.863123    69.726246    84747.885 
+   21300    1000.8735   -2073.5423    774.70622     34.75565     34.75565      69.5113    83966.538 
+   21400    976.75842   -2092.9522   -204.11445    34.746009    34.746009    69.492018     83896.68 
+   21489    1014.8297   -2072.3483   -111.52946    34.799207    34.799207    69.598413    84282.619 
+Loop time of 27.9671 on 1 procs for 1000 steps with 1272 atoms
 
-Performance: 3.879 ns/day, 6.188 hours/ns, 44.891 timesteps/s
+Performance: 3.089 ns/day, 7.769 hours/ns, 35.756 timesteps/s
+100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 27.147     | 27.147     | 27.147     |   0.0 | 97.07
+Neigh   | 0.6479     | 0.6479     | 0.6479     |   0.0 |  2.32
+Comm    | 0.025515   | 0.025515   | 0.025515   |   0.0 |  0.09
+Output  | 0.092012   | 0.092012   | 0.092012   |   0.0 |  0.33
+Modify  | 0.049091   | 0.049091   | 0.049091   |   0.0 |  0.18
+Other   |            | 0.00577    |            |       |  0.02
+
+Nlocal:        1272.00 ave        1272 max        1272 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        4731.00 ave        4731 max        4731 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      10894.0 ave       10894 max       10894 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 10894
+Ave neighs/atom = 8.5644654
+Neighbor list builds = 100
+Dangerous builds not checked
+#
+#
+#
+next i
+jump in_deposit1_CdTe.lammps loop
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
+#
+variable seed equal 12345
+variable newx equal random(xlo,xhi,${seed})
+variable newx equal random(xlo,xhi,12345)
+variable newy equal random(ylo,yhi,${seed})
+variable newy equal random(ylo,yhi,12345)
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 21.3746951210027 ${newy} 19.0
+create_atoms 1 single 21.3746951210027 8.1892594341939 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.6003967 2.6003967 -10.799207) to (37.399603 37.399603 58.799207)
+  create_atoms CPU = 0.000 seconds
+variable newx2 equal random(xlo,xhi,${seed})
+variable newx2 equal random(xlo,xhi,12345)
+variable newy2 equal random(ylo,yhi,${seed})
+variable newy2 equal random(ylo,yhi,12345)
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 20.3289610011841 ${newy2} 19.0
+create_atoms 2 single 20.3289610011841 10.9286499852419 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.6003967 2.6003967 -10.799207) to (37.399603 37.399603 58.799207)
+  create_atoms CPU = 0.000 seconds
+run 1000
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   21489    1013.2353   -2067.3647    322.29858    34.799207    34.799207    69.598413    84282.619 
+   21500     1025.944   -2068.5269   -646.61785    34.852038    34.852038    69.704075    84667.068 
+   21600    1018.4037   -2080.1045    990.84766    34.731452    34.731452    69.462904    83791.278 
+   21700    987.35661   -2085.3244   -608.86676    34.814353    34.814353    69.628707    84392.723 
+   21800    1011.5655   -2086.1496    486.33741    34.753222    34.753222    69.506443    83948.939 
+   21900    1001.6478   -2087.3782    696.59316    34.666989    34.666989    69.333978    83325.583 
+   22000    938.51702   -2086.3841    -2717.527    34.893493    34.893493    69.786987    84969.555 
+   22100    1017.1058    -2081.535   -536.82064    34.741879    34.741879    69.483758    83866.766 
+   22200    1032.7954   -2079.4583    1082.1819    34.625199    34.625199    69.250399     83024.61 
+   22300    998.51837   -2089.1296   -1206.3715    34.760095    34.760095     69.52019    83998.757 
+   22400    973.69667   -2092.4715   -419.25201     34.70543     34.70543     69.41086    83603.082 
+   22489    952.91556    -2088.616    -1633.974    34.718223    34.718223    69.436445    83695.565 
+Loop time of 27.1024 on 1 procs for 1000 steps with 1274 atoms
+
+Performance: 3.188 ns/day, 7.528 hours/ns, 36.897 timesteps/s
 99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 20.461     | 20.461     | 20.461     |   0.0 | 91.85
-Neigh   | 1.4436     | 1.4436     | 1.4436     |   0.0 |  6.48
-Comm    | 0.063342   | 0.063342   | 0.063342   |   0.0 |  0.28
-Output  | 0.23348    | 0.23348    | 0.23348    |   0.0 |  1.05
-Modify  | 0.061849   | 0.061849   | 0.061849   |   0.0 |  0.28
-Other   |            | 0.01277    |            |       |  0.06
+Pair    | 26.259     | 26.259     | 26.259     |   0.0 | 96.89
+Neigh   | 0.65361    | 0.65361    | 0.65361    |   0.0 |  2.41
+Comm    | 0.024988   | 0.024988   | 0.024988   |   0.0 |  0.09
+Output  | 0.10732    | 0.10732    | 0.10732    |   0.0 |  0.40
+Modify  | 0.05092    | 0.05092    | 0.05092    |   0.0 |  0.19
+Other   |            | 0.00623    |            |       |  0.02
 
-Nlocal:        1272.00 ave        1272 max        1272 min
+Nlocal:        1274.00 ave        1274 max        1274 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4711.00 ave        4711 max        4711 min
+Nghost:        4742.00 ave        4742 max        4742 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8924.00 ave        8924 max        8924 min
+FullNghs:      10868.0 ave       10868 max       10868 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 8924
-Ave neighs/atom = 7.0157233
+Total # of neighbors = 10868
+Ave neighs/atom = 8.5306122
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -887,123 +959,51 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 18.4210013471408 ${newy} 31.0
-create_atoms 1 single 18.4210013471408 5.48369082995466 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 12.5412531083168 ${newy} 19.0
+create_atoms 1 single 12.5412531083168 19.0692565181551 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.6408887 2.6408887 -10.718223) to (37.359111 37.359111 58.718223)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 17.3949459821259 ${newy2} 31.0
-create_atoms 2 single 17.3949459821259 8.17153118870816 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 13.4930544720913 ${newy2} 19.0
+create_atoms 2 single 13.4930544720913 8.33665669838776 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.6408887 2.6408887 -10.718223) to (37.359111 37.359111 58.718223)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   21043    994.19646   -2248.1411    1395.6196    34.144351    34.144351    68.288702    79613.474 
-   21100    1018.4049    -2289.826   -511.51275    34.144351    34.144351    68.288702    79613.474 
-   21200    1019.0332    -2296.226    412.72845    34.144351    34.144351    68.288702    79613.474 
-   21300    999.61211   -2302.5924    388.98116    34.144351    34.144351    68.288702    79613.474 
-   21400    1016.3576   -2289.2096    449.66498    34.144351    34.144351    68.288702    79613.474 
-   21500    1009.5254    -2282.905    953.49334    34.144351    34.144351    68.288702    79613.474 
-   21600    1017.1301   -2284.1904    1211.3275    34.144351    34.144351    68.288702    79613.474 
-   21700    959.89068   -2302.0818    1193.4614    34.144351    34.144351    68.288702    79613.474 
-   21800    985.50102   -2295.1779     1171.737    34.144351    34.144351    68.288702    79613.474 
-   21900    1037.0004   -2289.3424    1370.1504    34.144351    34.144351    68.288702    79613.474 
-   22000     1000.817   -2289.9485    1571.5855    34.144351    34.144351    68.288702    79613.474 
-   22043    993.79926   -2289.4281     1358.195    34.144351    34.144351    68.288702    79613.474 
-Loop time of 21.5252 on 1 procs for 1000 steps with 1274 atoms
+   22489    951.42079   -2026.0003    322.07843    34.718223    34.718223    69.436445    83695.565 
+   22500    1178.9926   -2039.5267   -106.51493     34.69407     34.69407    69.388139    83521.009 
+   22600     1041.489   -2092.9083   -741.35045    34.690675    34.690675     69.38135    83496.495 
+   22700    987.89076   -2107.8111     128.6896    34.671266    34.671266    69.342533     83356.43 
+   22800    1007.8626   -2095.3582   -263.13316    34.741011    34.741011    69.482022    83860.481 
+   22900    1033.3341   -2083.9492    450.27924    34.673342    34.673342    69.346684    83371.401 
+   23000    980.24049   -2083.8668   -435.69039    34.756317    34.756317    69.512633    83971.368 
+   23100    1010.1647    -2083.032      592.007     34.68949     34.68949     69.37898    83487.939 
+   23200    1007.0249   -2079.8168   -1884.4931    34.791205    34.791205    69.582411    84224.496 
+   23300    954.58177   -2091.6115     2207.159    34.479497    34.479497    68.958994    81980.915 
+   23400    1020.7196   -2070.5837    -603.0522    34.630728    34.630728    69.261455    83064.383 
+   23489    1018.3532   -2076.7479   -911.50669    34.651797    34.651797    69.303594    83216.085 
+Loop time of 28.127 on 1 procs for 1000 steps with 1276 atoms
 
-Performance: 4.014 ns/day, 5.979 hours/ns, 46.457 timesteps/s
+Performance: 3.072 ns/day, 7.813 hours/ns, 35.553 timesteps/s
 99.8% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 19.776     | 19.776     | 19.776     |   0.0 | 91.88
-Neigh   | 1.4152     | 1.4152     | 1.4152     |   0.0 |  6.57
-Comm    | 0.059987   | 0.059987   | 0.059987   |   0.0 |  0.28
-Output  | 0.20877    | 0.20877    | 0.20877    |   0.0 |  0.97
-Modify  | 0.053832   | 0.053832   | 0.053832   |   0.0 |  0.25
-Other   |            | 0.01091    |            |       |  0.05
-
-Nlocal:        1274.00 ave        1274 max        1274 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4709.00 ave        4709 max        4709 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:         0.00000 ave           0 max           0 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8952.00 ave        8952 max        8952 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-
-Total # of neighbors = 8952
-Ave neighs/atom = 7.0266876
-Neighbor list builds = 100
-Dangerous builds not checked
-#
-#
-#
-next i
-jump in_deposit1_CdTe.lammps loop
-#
-# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
-#
-variable seed equal 12345
-variable newx equal random(xlo,xhi,${seed})
-variable newx equal random(xlo,xhi,12345)
-variable newy equal random(ylo,yhi,${seed})
-variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 9.73671722278193 ${newy} 31.0
-create_atoms 1 single 9.73671722278193 16.156816571143 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-variable newx2 equal random(xlo,xhi,${seed})
-variable newx2 equal random(xlo,xhi,12345)
-variable newy2 equal random(ylo,yhi,${seed})
-variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 10.6727858691508 ${newy2} 31.0
-create_atoms 2 single 10.6727858691508 5.60162032151129 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
-Step Temp TotEng Press Lx Ly Lz Volume 
-   22043    992.24036   -2281.4985    1756.2917    34.144351    34.144351    68.288702    79613.474 
-   22100    989.43161   -2299.6705    802.87664    34.144351    34.144351    68.288702    79613.474 
-   22200    992.51956   -2302.1944    1132.7643    34.144351    34.144351    68.288702    79613.474 
-   22300    990.95063   -2306.4562    1574.8701    34.144351    34.144351    68.288702    79613.474 
-   22400    1030.0393   -2296.4474    1621.3141    34.144351    34.144351    68.288702    79613.474 
-   22500    959.34754   -2296.6602    1844.9826    34.144351    34.144351    68.288702    79613.474 
-   22600    961.39224   -2296.2184    1836.7101    34.144351    34.144351    68.288702    79613.474 
-   22700    1025.0573   -2291.6879    2027.6175    34.144351    34.144351    68.288702    79613.474 
-   22800    985.09374   -2309.2879    1873.6081    34.144351    34.144351    68.288702    79613.474 
-   22900    958.57113   -2312.8039    2367.5512    34.144351    34.144351    68.288702    79613.474 
-   23000     1020.047   -2289.0667    2582.3519    34.144351    34.144351    68.288702    79613.474 
-   23043    1007.9548   -2287.5084    2390.8091    34.144351    34.144351    68.288702    79613.474 
-Loop time of 22.4216 on 1 procs for 1000 steps with 1276 atoms
-
-Performance: 3.853 ns/day, 6.228 hours/ns, 44.600 timesteps/s
-99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 20.638     | 20.638     | 20.638     |   0.0 | 92.05
-Neigh   | 1.4257     | 1.4257     | 1.4257     |   0.0 |  6.36
-Comm    | 0.060246   | 0.060246   | 0.060246   |   0.0 |  0.27
-Output  | 0.23218    | 0.23218    | 0.23218    |   0.0 |  1.04
-Modify  | 0.05412    | 0.05412    | 0.05412    |   0.0 |  0.24
-Other   |            | 0.01132    |            |       |  0.05
+Pair    | 27.294     | 27.294     | 27.294     |   0.0 | 97.04
+Neigh   | 0.643      | 0.643      | 0.643      |   0.0 |  2.29
+Comm    | 0.025484   | 0.025484   | 0.025484   |   0.0 |  0.09
+Output  | 0.10526    | 0.10526    | 0.10526    |   0.0 |  0.37
+Modify  | 0.053      | 0.053      | 0.053      |   0.0 |  0.19
+Other   |            | 0.006472   |            |       |  0.02
 
 Nlocal:        1276.00 ave        1276 max        1276 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -1011,11 +1011,11 @@ Nghost:        4730.00 ave        4730 max        4730 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      9250.00 ave        9250 max        9250 min
+FullNghs:      10958.0 ave       10958 max       10958 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 9250
-Ave neighs/atom = 7.2492163
+Total # of neighbors = 10958
+Ave neighs/atom = 8.5877743
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -1031,63 +1031,63 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 32.4016640703446 ${newy} 31.0
-create_atoms 1 single 32.4016640703446 14.7294781581579 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 35.5573123278729 ${newy} 19.0
+create_atoms 1 single 35.5573123278729 17.6224860695557 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.6741015 2.6741015 -10.651797) to (37.325899 37.325899 58.651797)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 19.0103883042005 ${newy2} 31.0
-create_atoms 2 single 19.0103883042005 25.7704187098427 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 21.9670182105285 ${newy2} 19.0
+create_atoms 2 single 21.9670182105285 28.8275147800292 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.6741015 2.6741015 -10.651797) to (37.325899 37.325899 58.651797)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   23043    1006.3762   -2287.6892    2379.5042    34.144351    34.144351    68.288702    79613.474 
-   23100    1000.7131   -2289.8795    2108.8218    34.144351    34.144351    68.288702    79613.474 
-   23200    988.15144    -2293.937    2220.3365    34.144351    34.144351    68.288702    79613.474 
-   23300    981.93352   -2300.0309    2400.9879    34.144351    34.144351    68.288702    79613.474 
-   23400    1002.0864   -2295.5049    2607.4595    34.144351    34.144351    68.288702    79613.474 
-   23500    1022.0154   -2295.7957    2113.6723    34.144351    34.144351    68.288702    79613.474 
-   23600    970.80364    -2306.418    1829.5581    34.144351    34.144351    68.288702    79613.474 
-   23700    1057.8356   -2289.3926    1942.4736    34.144351    34.144351    68.288702    79613.474 
-   23800    984.15415   -2307.0701    1685.0345    34.144351    34.144351    68.288702    79613.474 
-   23900    1002.6054   -2299.5219    1504.8379    34.144351    34.144351    68.288702    79613.474 
-   24000    1016.5799   -2299.4184     1711.369    34.144351    34.144351    68.288702    79613.474 
-   24043    1020.5141   -2299.4507    1331.4272    34.144351    34.144351    68.288702    79613.474 
-Loop time of 22.4651 on 1 procs for 1000 steps with 1278 atoms
+   23489    1016.7583   -2064.6206   -122.73767    34.651797    34.651797    69.303594    83216.085 
+   23500    1018.7422   -2066.1072   -792.13417    34.691128    34.691128    69.382256    83499.767 
+   23600    998.10974   -2089.9413    3191.6623    34.427322    34.427322    68.854645    81609.315 
+   23700    1002.1703   -2078.6118   -819.50023    34.674068    34.674068    69.348137    83376.643 
+   23800    1005.2274   -2070.2935   -876.02424    34.683045    34.683045     69.36609    83441.415 
+   23900    994.81887   -2079.2658   -743.83129     34.68849     34.68849    69.376979    83480.717 
+   24000    1022.8793   -2074.3264    410.33666     34.59153     34.59153    69.183059    82782.645 
+   24100    977.41876    -2076.939    2126.7494    34.461467    34.461467    68.922935    81852.377 
+   24200    952.76293   -2076.5208    -53.35015    34.558351    34.558351    69.116701    82544.667 
+   24300    983.25006   -2077.6111   -286.79411    34.572702    34.572702    69.145405    82647.549 
+   24400    1003.1716    -2083.951   -545.60068    34.578969    34.578969    69.157939    82692.502 
+   24489    1007.5848   -2090.7904   -1471.3782    34.591054    34.591054    69.182109    82779.232 
+Loop time of 26.4334 on 1 procs for 1000 steps with 1278 atoms
 
-Performance: 3.846 ns/day, 6.240 hours/ns, 44.513 timesteps/s
-99.8% CPU use with 1 MPI tasks x 1 OpenMP threads
+Performance: 3.269 ns/day, 7.343 hours/ns, 37.831 timesteps/s
+99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 20.728     | 20.728     | 20.728     |   0.0 | 92.27
-Neigh   | 1.3977     | 1.3977     | 1.3977     |   0.0 |  6.22
-Comm    | 0.059734   | 0.059734   | 0.059734   |   0.0 |  0.27
-Output  | 0.21447    | 0.21447    | 0.21447    |   0.0 |  0.95
-Modify  | 0.054449   | 0.054449   | 0.054449   |   0.0 |  0.24
-Other   |            | 0.01095    |            |       |  0.05
+Pair    | 25.566     | 25.566     | 25.566     |   0.0 | 96.72
+Neigh   | 0.66073    | 0.66073    | 0.66073    |   0.0 |  2.50
+Comm    | 0.024064   | 0.024064   | 0.024064   |   0.0 |  0.09
+Output  | 0.12058    | 0.12058    | 0.12058    |   0.0 |  0.46
+Modify  | 0.056383   | 0.056383   | 0.056383   |   0.0 |  0.21
+Other   |            | 0.006026   |            |       |  0.02
 
 Nlocal:        1278.00 ave        1278 max        1278 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4743.00 ave        4743 max        4743 min
+Nghost:        4754.00 ave        4754 max        4754 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      9056.00 ave        9056 max        9056 min
+FullNghs:      10720.0 ave       10720 max       10720 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 9056
-Ave neighs/atom = 7.0860720
+Total # of neighbors = 10720
+Ave neighs/atom = 8.3881064
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -1103,423 +1103,423 @@ variable newx equal random(xlo,xhi,${seed})
 variable newx equal random(xlo,xhi,12345)
 variable newy equal random(ylo,yhi,${seed})
 variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 19.1251103806001 ${newy} 31.0
-create_atoms 1 single 19.1251103806001 31.6759924965367 31.0
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 22.0797930953412 ${newy} 19.0
+create_atoms 1 single 22.0797930953412 34.7948758130061 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.7044728 2.7044728 -10.591054) to (37.295527 37.295527 58.591054)
   create_atoms CPU = 0.000 seconds
 variable newx2 equal random(xlo,xhi,${seed})
 variable newx2 equal random(xlo,xhi,12345)
 variable newy2 equal random(ylo,yhi,${seed})
 variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 29.2837655094926 ${newy2} 31.0
-create_atoms 2 single 29.2837655094926 7.23630713452854 31.0
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 32.3713518137589 ${newy2} 19.0
+create_atoms 2 single 32.3713518137589 10.0354510888222 19.0
 Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
+  using lattice units in orthogonal box = (2.7044728 2.7044728 -10.591054) to (37.295527 37.295527 58.591054)
   create_atoms CPU = 0.000 seconds
 run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
 Step Temp TotEng Press Lx Ly Lz Volume 
-   24043    1018.9183   -2300.3253    1333.6943    34.144351    34.144351    68.288702    79613.474 
-   24100    980.10485   -2306.8375    858.27638    34.144351    34.144351    68.288702    79613.474 
-   24200    1006.7121   -2303.3214    860.45651    34.144351    34.144351    68.288702    79613.474 
-   24300    987.41784   -2305.4291    778.90682    34.144351    34.144351    68.288702    79613.474 
-   24400    1008.5521   -2296.1687    1030.8729    34.144351    34.144351    68.288702    79613.474 
-   24500    951.59195   -2298.0729    1157.0015    34.144351    34.144351    68.288702    79613.474 
-   24600    987.49764   -2290.1855    928.34446    34.144351    34.144351    68.288702    79613.474 
-   24700     1075.976   -2293.5899    696.29995    34.144351    34.144351    68.288702    79613.474 
-   24800    988.37675    -2306.995    462.72692    34.144351    34.144351    68.288702    79613.474 
-   24900    978.81574   -2301.8141    102.92072    34.144351    34.144351    68.288702    79613.474 
-   25000    1006.6616   -2285.9161    231.72266    34.144351    34.144351    68.288702    79613.474 
-   25043    1000.9511   -2293.1711   -319.32066    34.144351    34.144351    68.288702    79613.474 
-Loop time of 21.5599 on 1 procs for 1000 steps with 1280 atoms
+   24489    1006.0092   -2076.5375   -565.66978    34.591054    34.591054    69.182109    82779.232 
+   24500    996.78999   -2082.5469    2725.7984    34.392554    34.392554    68.785108    81362.311 
+   24600    1034.5147   -2084.3972   -1136.4256    34.598651    34.598651    69.197302    82833.782 
+   24700    972.67781     -2099.51    152.42052     34.53771     34.53771     69.07542    82396.851 
+   24800    1047.1161   -2077.7726    1138.6273    34.526488    34.526488    69.052975    82316.556 
+   24900    963.34411   -2094.3262   -2128.4774    34.734091    34.734091    69.468183    83810.383 
+   25000    1027.3202    -2086.011    183.22769     34.55588     34.55588    69.111761    82526.967 
+   25100    988.94071    -2098.439    1065.7347    34.509785    34.509785     69.01957     82197.15 
+   25200    991.25551   -2107.2585   -1258.4286    34.619008    34.619008    69.238015    82980.077 
+   25300    998.35702   -2103.4908    597.63308    34.467563    34.467563    68.935127    81895.822 
+   25400    972.73689   -2100.9871   -262.89126    34.546162    34.546162    69.092324    82457.358 
+   25489    980.73071   -2095.5938    78.962917    34.510053    34.510053    69.020107    82199.066 
+Loop time of 26.174 on 1 procs for 1000 steps with 1280 atoms
 
-Performance: 4.007 ns/day, 5.989 hours/ns, 46.382 timesteps/s
-99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 19.804     | 19.804     | 19.804     |   0.0 | 91.86
-Neigh   | 1.403      | 1.403      | 1.403      |   0.0 |  6.51
-Comm    | 0.067169   | 0.067169   | 0.067169   |   0.0 |  0.31
-Output  | 0.21925    | 0.21925    | 0.21925    |   0.0 |  1.02
-Modify  | 0.054272   | 0.054272   | 0.054272   |   0.0 |  0.25
-Other   |            | 0.01194    |            |       |  0.06
-
-Nlocal:        1280.00 ave        1280 max        1280 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4743.00 ave        4743 max        4743 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:         0.00000 ave           0 max           0 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8984.00 ave        8984 max        8984 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-
-Total # of neighbors = 8984
-Ave neighs/atom = 7.0187500
-Neighbor list builds = 100
-Dangerous builds not checked
-#
-#
-#
-next i
-jump in_deposit1_CdTe.lammps loop
-#
-# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
-#
-variable seed equal 12345
-variable newx equal random(xlo,xhi,${seed})
-variable newx equal random(xlo,xhi,12345)
-variable newy equal random(ylo,yhi,${seed})
-variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 15.3541812796981 ${newy} 31.0
-create_atoms 1 single 15.3541812796981 30.4830782775241 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-variable newx2 equal random(xlo,xhi,${seed})
-variable newx2 equal random(xlo,xhi,12345)
-variable newy2 equal random(ylo,yhi,${seed})
-variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 25.4776769515766 ${newy2} 31.0
-create_atoms 2 single 25.4776769515766 21.8344013457976 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
-Step Temp TotEng Press Lx Ly Lz Volume 
-   25043    999.38835   -2244.0017    1284.9777    34.144351    34.144351    68.288702    79613.474 
-   25100    1005.2104   -2301.1129   -592.15538    34.144351    34.144351    68.288702    79613.474 
-   25200     1024.576   -2323.2116   -200.36489    34.144351    34.144351    68.288702    79613.474 
-   25300    978.12367   -2326.8234   -154.43522    34.144351    34.144351    68.288702    79613.474 
-   25400    1041.0636   -2297.7793   -118.24704    34.144351    34.144351    68.288702    79613.474 
-   25500     1009.331   -2299.8542   -216.70343    34.144351    34.144351    68.288702    79613.474 
-   25600    1009.8292   -2305.4442   -214.87829    34.144351    34.144351    68.288702    79613.474 
-   25700    1038.8594    -2298.458    396.65804    34.144351    34.144351    68.288702    79613.474 
-   25800    990.92669   -2308.0554   -28.078172    34.144351    34.144351    68.288702    79613.474 
-   25900    1050.0237   -2292.0205    468.15659    34.144351    34.144351    68.288702    79613.474 
-   26000    986.69007   -2306.8102    132.38923    34.144351    34.144351    68.288702    79613.474 
-   26043    992.00584   -2303.7809    434.73336    34.144351    34.144351    68.288702    79613.474 
-Loop time of 21.7621 on 1 procs for 1000 steps with 1282 atoms
-
-Performance: 3.970 ns/day, 6.045 hours/ns, 45.952 timesteps/s
-99.8% CPU use with 1 MPI tasks x 1 OpenMP threads
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 19.977     | 19.977     | 19.977     |   0.0 | 91.80
-Neigh   | 1.4343     | 1.4343     | 1.4343     |   0.0 |  6.59
-Comm    | 0.060164   | 0.060164   | 0.060164   |   0.0 |  0.28
-Output  | 0.22528    | 0.22528    | 0.22528    |   0.0 |  1.04
-Modify  | 0.053768   | 0.053768   | 0.053768   |   0.0 |  0.25
-Other   |            | 0.01111    |            |       |  0.05
-
-Nlocal:        1282.00 ave        1282 max        1282 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4700.00 ave        4700 max        4700 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:         0.00000 ave           0 max           0 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8830.00 ave        8830 max        8830 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-
-Total # of neighbors = 8830
-Ave neighs/atom = 6.8876755
-Neighbor list builds = 100
-Dangerous builds not checked
-#
-#
-#
-next i
-jump in_deposit1_CdTe.lammps loop
-#
-# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
-#
-variable seed equal 12345
-variable newx equal random(xlo,xhi,${seed})
-variable newx equal random(xlo,xhi,12345)
-variable newy equal random(ylo,yhi,${seed})
-variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 4.40805281552831 ${newy} 31.0
-create_atoms 1 single 4.40805281552831 26.6621533893447 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-variable newx2 equal random(xlo,xhi,${seed})
-variable newx2 equal random(xlo,xhi,12345)
-variable newy2 equal random(ylo,yhi,${seed})
-variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 11.9813135654758 ${newy2} 31.0
-create_atoms 2 single 11.9813135654758 14.234618365947 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
-Step Temp TotEng Press Lx Ly Lz Volume 
-   26043    990.45946   -2274.8215    1371.7769    34.144351    34.144351    68.288702    79613.474 
-   26100    1019.9198    -2315.505   -207.64471    34.144351    34.144351    68.288702    79613.474 
-   26200    1018.8918   -2314.6712    427.22164    34.144351    34.144351    68.288702    79613.474 
-   26300    974.12597   -2320.3862    643.45066    34.144351    34.144351    68.288702    79613.474 
-   26400    995.65447   -2315.6958    317.17362    34.144351    34.144351    68.288702    79613.474 
-   26500    1029.3152   -2303.8026    1073.3776    34.144351    34.144351    68.288702    79613.474 
-   26600    1004.8452   -2310.7002    1208.3393    34.144351    34.144351    68.288702    79613.474 
-   26700    961.67844   -2318.9066    1145.9574    34.144351    34.144351    68.288702    79613.474 
-   26800    1006.5168   -2311.4452    1775.5416    34.144351    34.144351    68.288702    79613.474 
-   26900    991.26758   -2302.6878    1848.8999    34.144351    34.144351    68.288702    79613.474 
-   27000    1001.3888   -2295.7983    1690.3854    34.144351    34.144351    68.288702    79613.474 
-   27043    1013.3107   -2293.7729    1703.1115    34.144351    34.144351    68.288702    79613.474 
-Loop time of 20.666 on 1 procs for 1000 steps with 1284 atoms
-
-Performance: 4.181 ns/day, 5.741 hours/ns, 48.389 timesteps/s
-99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 19.01      | 19.01      | 19.01      |   0.0 | 91.99
-Neigh   | 1.33       | 1.33       | 1.33       |   0.0 |  6.44
-Comm    | 0.058537   | 0.058537   | 0.058537   |   0.0 |  0.28
-Output  | 0.20606    | 0.20606    | 0.20606    |   0.0 |  1.00
-Modify  | 0.050446   | 0.050446   | 0.050446   |   0.0 |  0.24
-Other   |            | 0.01128    |            |       |  0.05
-
-Nlocal:        1284.00 ave        1284 max        1284 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4703.00 ave        4703 max        4703 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:         0.00000 ave           0 max           0 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      9042.00 ave        9042 max        9042 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-
-Total # of neighbors = 9042
-Ave neighs/atom = 7.0420561
-Neighbor list builds = 100
-Dangerous builds not checked
-#
-#
-#
-next i
-jump in_deposit1_CdTe.lammps loop
-#
-# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
-#
-variable seed equal 12345
-variable newx equal random(xlo,xhi,${seed})
-variable newx equal random(xlo,xhi,12345)
-variable newy equal random(ylo,yhi,${seed})
-variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 26.2621952317725 ${newy} 31.0
-create_atoms 1 single 26.2621952317725 7.28191307758402 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-variable newx2 equal random(xlo,xhi,${seed})
-variable newx2 equal random(xlo,xhi,12345)
-variable newy2 equal random(ylo,yhi,${seed})
-variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 25.1648990243881 ${newy2} 31.0
-create_atoms 2 single 25.1648990243881 21.8441111032307 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
-Step Temp TotEng Press Lx Ly Lz Volume 
-   27043    1011.7336   -2294.1106    1686.1107    34.144351    34.144351    68.288702    79613.474 
-   27100     994.1057   -2295.0368    2001.1768    34.144351    34.144351    68.288702    79613.474 
-   27200    970.25004   -2298.2416      2134.26    34.144351    34.144351    68.288702    79613.474 
-   27300     1025.495   -2288.2761    2461.0623    34.144351    34.144351    68.288702    79613.474 
-   27400    983.38879   -2294.6413    2548.9787    34.144351    34.144351    68.288702    79613.474 
-   27500    991.08082   -2292.2214     2654.064    34.144351    34.144351    68.288702    79613.474 
-   27600    1007.7568   -2292.5811    2680.4956    34.144351    34.144351    68.288702    79613.474 
-   27700    993.82314   -2299.6238    2688.6999    34.144351    34.144351    68.288702    79613.474 
-   27800    1034.8065   -2296.0537    2670.0082    34.144351    34.144351    68.288702    79613.474 
-   27900    1016.1712   -2295.2913    2141.1059    34.144351    34.144351    68.288702    79613.474 
-   28000    1001.7322   -2291.8631    2112.0312    34.144351    34.144351    68.288702    79613.474 
-   28043    1009.6688   -2285.6703    2324.8559    34.144351    34.144351    68.288702    79613.474 
-Loop time of 22.4711 on 1 procs for 1000 steps with 1286 atoms
-
-Performance: 3.845 ns/day, 6.242 hours/ns, 44.502 timesteps/s
-99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 20.697     | 20.697     | 20.697     |   0.0 | 92.10
-Neigh   | 1.4109     | 1.4109     | 1.4109     |   0.0 |  6.28
-Comm    | 0.067602   | 0.067602   | 0.067602   |   0.0 |  0.30
-Output  | 0.22589    | 0.22589    | 0.22589    |   0.0 |  1.01
-Modify  | 0.058303   | 0.058303   | 0.058303   |   0.0 |  0.26
-Other   |            | 0.01169    |            |       |  0.05
-
-Nlocal:        1286.00 ave        1286 max        1286 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4761.00 ave        4761 max        4761 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:         0.00000 ave           0 max           0 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      9092.00 ave        9092 max        9092 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-
-Total # of neighbors = 9092
-Ave neighs/atom = 7.0699844
-Neighbor list builds = 100
-Dangerous builds not checked
-#
-#
-#
-next i
-jump in_deposit1_CdTe.lammps loop
-#
-# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
-#
-variable seed equal 12345
-variable newx equal random(xlo,xhi,${seed})
-variable newx equal random(xlo,xhi,12345)
-variable newy equal random(ylo,yhi,${seed})
-variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 10.4675703187916 ${newy} 31.0
-create_atoms 1 single 10.4675703187916 4.7378426610532 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-variable newx2 equal random(xlo,xhi,${seed})
-variable newx2 equal random(xlo,xhi,12345)
-variable newy2 equal random(ylo,yhi,${seed})
-variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 7.87617424739834 ${newy2} 31.0
-create_atoms 2 single 7.87617424739834 18.6948527326352 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
-Step Temp TotEng Press Lx Ly Lz Volume 
-   28043    1008.0998   -2254.2173    3504.2985    34.144351    34.144351    68.288702    79613.474 
-   28100    1004.5283   -2306.4646    1961.7156    34.144351    34.144351    68.288702    79613.474 
-   28200    992.95168   -2314.2639    2586.9599    34.144351    34.144351    68.288702    79613.474 
-   28300    999.99871   -2316.1902     2255.119    34.144351    34.144351    68.288702    79613.474 
-   28400    980.08568   -2310.5821    2264.5409    34.144351    34.144351    68.288702    79613.474 
-   28500    988.69475   -2311.1314    2117.4587    34.144351    34.144351    68.288702    79613.474 
-   28600    988.23676   -2307.7878    2353.8767    34.144351    34.144351    68.288702    79613.474 
-   28700    995.78031   -2307.8836    2634.8955    34.144351    34.144351    68.288702    79613.474 
-   28800    987.47455   -2310.6566    2172.1908    34.144351    34.144351    68.288702    79613.474 
-   28900    1005.6581   -2316.4899    2085.9345    34.144351    34.144351    68.288702    79613.474 
-   29000    982.75489    -2315.264     2025.262    34.144351    34.144351    68.288702    79613.474 
-   29043    963.22939   -2315.8588    1843.3664    34.144351    34.144351    68.288702    79613.474 
-Loop time of 21.8723 on 1 procs for 1000 steps with 1288 atoms
-
-Performance: 3.950 ns/day, 6.076 hours/ns, 45.720 timesteps/s
-99.8% CPU use with 1 MPI tasks x 1 OpenMP threads
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 20.109     | 20.109     | 20.109     |   0.0 | 91.94
-Neigh   | 1.3859     | 1.3859     | 1.3859     |   0.0 |  6.34
-Comm    | 0.07474    | 0.07474    | 0.07474    |   0.0 |  0.34
-Output  | 0.23557    | 0.23557    | 0.23557    |   0.0 |  1.08
-Modify  | 0.056064   | 0.056064   | 0.056064   |   0.0 |  0.26
-Other   |            | 0.01141    |            |       |  0.05
-
-Nlocal:        1288.00 ave        1288 max        1288 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4777.00 ave        4777 max        4777 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:         0.00000 ave           0 max           0 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8938.00 ave        8938 max        8938 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-
-Total # of neighbors = 8938
-Ave neighs/atom = 6.9394410
-Neighbor list builds = 100
-Dangerous builds not checked
-#
-#
-#
-next i
-jump in_deposit1_CdTe.lammps loop
-#
-# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
-#
-variable seed equal 12345
-variable newx equal random(xlo,xhi,${seed})
-variable newx equal random(xlo,xhi,12345)
-variable newy equal random(ylo,yhi,${seed})
-variable newy equal random(ylo,yhi,12345)
-create_atoms 1 single ${newx} ${newy} 31.0
-create_atoms 1 single 12.2017643378312 ${newy} 31.0
-create_atoms 1 single 12.2017643378312 28.6361261133202 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-variable newx2 equal random(xlo,xhi,${seed})
-variable newx2 equal random(xlo,xhi,12345)
-variable newy2 equal random(ylo,yhi,${seed})
-variable newy2 equal random(ylo,yhi,12345)
-create_atoms 2 single ${newx2} ${newy2} 31.0
-create_atoms 2 single 30.0517277476181 ${newy2} 31.0
-create_atoms 2 single 30.0517277476181 25.7276884505544 31.0
-Created 1 atoms
-  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.657740) to (34.144351 34.144351 54.630961)
-  create_atoms CPU = 0.000 seconds
-run 1000
-Per MPI rank memory allocation (min/avg/max) = 10.52 | 10.52 | 10.52 Mbytes
-Step Temp TotEng Press Lx Ly Lz Volume 
-   29043    961.73485   -2316.0839    1848.7283    34.144351    34.144351    68.288702    79613.474 
-   29100     1035.526   -2303.0568    1819.0216    34.144351    34.144351    68.288702    79613.474 
-   29200     998.8813   -2302.4215    1091.4193    34.144351    34.144351    68.288702    79613.474 
-   29300    995.84108   -2309.4215    469.10922    34.144351    34.144351    68.288702    79613.474 
-   29400    985.41883    -2317.371      1233.81    34.144351    34.144351    68.288702    79613.474 
-   29500    971.59343   -2315.3325    909.70477    34.144351    34.144351    68.288702    79613.474 
-   29600    1022.1918   -2306.3616    504.41708    34.144351    34.144351    68.288702    79613.474 
-   29700    989.38898    -2310.197    86.708516    34.144351    34.144351    68.288702    79613.474 
-   29800    995.28987   -2309.7788    86.582601    34.144351    34.144351    68.288702    79613.474 
-   29900    989.90379   -2307.8763    479.93981    34.144351    34.144351    68.288702    79613.474 
-   30000     1011.623   -2298.5935     461.7418    34.144351    34.144351    68.288702    79613.474 
-   30043    970.44001   -2310.4647    57.819179    34.144351    34.144351    68.288702    79613.474 
-Loop time of 21.9261 on 1 procs for 1000 steps with 1290 atoms
-
-Performance: 3.941 ns/day, 6.091 hours/ns, 45.608 timesteps/s
+Performance: 3.301 ns/day, 7.271 hours/ns, 38.206 timesteps/s
 100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 20.177     | 20.177     | 20.177     |   0.0 | 92.02
-Neigh   | 1.3918     | 1.3918     | 1.3918     |   0.0 |  6.35
-Comm    | 0.065757   | 0.065757   | 0.065757   |   0.0 |  0.30
-Output  | 0.22128    | 0.22128    | 0.22128    |   0.0 |  1.01
-Modify  | 0.057057   | 0.057057   | 0.057057   |   0.0 |  0.26
-Other   |            | 0.01356    |            |       |  0.06
+Pair    | 25.344     | 25.344     | 25.344     |   0.0 | 96.83
+Neigh   | 0.63204    | 0.63204    | 0.63204    |   0.0 |  2.41
+Comm    | 0.02445    | 0.02445    | 0.02445    |   0.0 |  0.09
+Output  | 0.11392    | 0.11392    | 0.11392    |   0.0 |  0.44
+Modify  | 0.053069   | 0.053069   | 0.053069   |   0.0 |  0.20
+Other   |            | 0.006946   |            |       |  0.03
 
-Nlocal:        1290.00 ave        1290 max        1290 min
+Nlocal:        1280.00 ave        1280 max        1280 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:        4734.00 ave        4734 max        4734 min
+Nghost:        4749.00 ave        4749 max        4749 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:         0.00000 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-FullNghs:      8694.00 ave        8694 max        8694 min
+FullNghs:      10840.0 ave       10840 max       10840 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 8694
-Ave neighs/atom = 6.7395349
+Total # of neighbors = 10840
+Ave neighs/atom = 8.4687500
+Neighbor list builds = 100
+Dangerous builds not checked
+#
+#
+#
+next i
+jump in_deposit1_CdTe.lammps loop
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
+#
+variable seed equal 12345
+variable newx equal random(xlo,xhi,${seed})
+variable newx equal random(xlo,xhi,12345)
+variable newy equal random(ylo,yhi,${seed})
+variable newy equal random(ylo,yhi,12345)
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 18.2636053255679 ${newy} 19.0
+create_atoms 1 single 18.2636053255679 33.5545400928711 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7449734 2.7449734 -10.510053) to (37.255027 37.255027 58.510053)
+  create_atoms CPU = 0.000 seconds
+variable newx2 equal random(xlo,xhi,${seed})
+variable newx2 equal random(xlo,xhi,12345)
+variable newy2 equal random(ylo,yhi,${seed})
+variable newy2 equal random(ylo,yhi,12345)
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 28.4955285092616 ${newy2} 19.0
+create_atoms 2 single 28.4955285092616 24.8132316679731 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7449734 2.7449734 -10.510053) to (37.255027 37.255027 58.510053)
+  create_atoms CPU = 0.000 seconds
+run 1000
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   25489    979.19952   -1977.3098    3288.0049    34.510053    34.510053    69.020107    82199.066 
+   25500    1418.6805   -2004.5854   -1441.0753    34.717454    34.717454    69.434908    83690.008 
+   25600    1010.5135   -2123.2629    590.72386    34.489012    34.489012    68.978024    82048.803 
+   25700    977.34003   -2127.1215   -727.30435    34.653628    34.653628    69.307256    83229.278 
+   25800    1008.1007   -2119.3525    849.21673    34.574717    34.574717    69.149433    82661.994 
+   25900    967.24086   -2112.6174   -1688.6441    34.690393    34.690393    69.380785    83494.457 
+   26000    980.99572   -2095.3151    1786.4226     34.46498     34.46498    68.929959    81877.406 
+   26100    992.61634    -2096.997    593.16694    34.518802    34.518802    69.037604    82261.596 
+   26200    990.09674   -2100.5576   -1397.4427    34.629422    34.629422    69.258843    83054.987 
+   26300    998.01319   -2095.0436    324.81083    34.529973    34.529973    69.059946    82341.488 
+   26400    984.09374   -2104.7911    1054.2203     34.47262     34.47262    68.945241    81931.874 
+   26489    978.70363   -2098.9914    1312.3275    34.466622    34.466622    68.933244    81889.112 
+Loop time of 24.4913 on 1 procs for 1000 steps with 1282 atoms
+
+Performance: 3.528 ns/day, 6.803 hours/ns, 40.831 timesteps/s
+100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 23.711     | 23.711     | 23.711     |   0.0 | 96.81
+Neigh   | 0.60973    | 0.60973    | 0.60973    |   0.0 |  2.49
+Comm    | 0.023873   | 0.023873   | 0.023873   |   0.0 |  0.10
+Output  | 0.093776   | 0.093776   | 0.093776   |   0.0 |  0.38
+Modify  | 0.047453   | 0.047453   | 0.047453   |   0.0 |  0.19
+Other   |            | 0.005241   |            |       |  0.02
+
+Nlocal:        1282.00 ave        1282 max        1282 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        4744.00 ave        4744 max        4744 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      10854.0 ave       10854 max       10854 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 10854
+Ave neighs/atom = 8.4664587
+Neighbor list builds = 100
+Dangerous builds not checked
+#
+#
+#
+next i
+jump in_deposit1_CdTe.lammps loop
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
+#
+variable seed equal 12345
+variable newx equal random(xlo,xhi,${seed})
+variable newx equal random(xlo,xhi,12345)
+variable newy equal random(ylo,yhi,${seed})
+variable newy equal random(ylo,yhi,12345)
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 7.21634718566315 ${newy} 19.0
+create_atoms 1 single 7.21634718566315 29.6804929098362 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7666890 2.7666890 -10.466622) to (37.233311 37.233311 58.466622)
+  create_atoms CPU = 0.000 seconds
+variable newx2 equal random(xlo,xhi,${seed})
+variable newx2 equal random(xlo,xhi,12345)
+variable newy2 equal random(ylo,yhi,${seed})
+variable newy2 equal random(ylo,yhi,12345)
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 14.8610880966549 ${newy2} 19.0
+create_atoms 2 single 14.8610880966549 17.1356606964715 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7666890 2.7666890 -10.466622) to (37.233311 37.233311 58.466622)
+  create_atoms CPU = 0.000 seconds
+run 1000
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   26489    977.17798   -1990.7401    4261.2786    34.466622    34.466622    68.933244    81889.112 
+   26500    1360.3364   -2009.2377    -1304.607    34.734856    34.734856    69.469712    83815.916 
+   26600    1003.1033   -2112.2517   -53.317095    34.577429    34.577429    69.154858     82681.45 
+   26700    1001.9072   -2123.4692   -100.23209    34.609511    34.609511    69.219023    82911.811 
+   26800    933.72365   -2117.3482   -353.02343     34.69363     34.69363     69.38726    83517.836 
+   26900    991.36364   -2106.5435    1749.9345    34.489664    34.489664    68.979327    82053.454 
+   27000    1008.2324   -2099.2276   -1323.2872     34.69917     34.69917     69.39834     83557.85 
+   27100    1034.0057   -2098.0557    532.92357    34.569601    34.569601    69.139202    82625.308 
+   27200    985.86692   -2108.9804    473.04946    34.581641    34.581641    69.163282    82711.671 
+   27300    1006.2579   -2111.9092    -1119.343    34.676229    34.676229    69.352459    83392.231 
+   27400    1002.3525   -2112.9895    1727.3033    34.468784    34.468784    68.937568    81904.522 
+   27489    979.77872   -2104.8205    121.00358    34.591836    34.591836    69.183672    82784.844 
+Loop time of 23.4561 on 1 procs for 1000 steps with 1284 atoms
+
+Performance: 3.683 ns/day, 6.516 hours/ns, 42.633 timesteps/s
+100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 22.687     | 22.687     | 22.687     |   0.0 | 96.72
+Neigh   | 0.60726    | 0.60726    | 0.60726    |   0.0 |  2.59
+Comm    | 0.024092   | 0.024092   | 0.024092   |   0.0 |  0.10
+Output  | 0.086164   | 0.086164   | 0.086164   |   0.0 |  0.37
+Modify  | 0.046374   | 0.046374   | 0.046374   |   0.0 |  0.20
+Other   |            | 0.005242   |            |       |  0.02
+
+Nlocal:        1284.00 ave        1284 max        1284 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        4749.00 ave        4749 max        4749 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      10598.0 ave       10598 max       10598 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 10598
+Ave neighs/atom = 8.2538941
+Neighbor list builds = 100
+Dangerous builds not checked
+#
+#
+#
+next i
+jump in_deposit1_CdTe.lammps loop
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
+#
+variable seed equal 12345
+variable newx equal random(xlo,xhi,${seed})
+variable newx equal random(xlo,xhi,12345)
+variable newy equal random(ylo,yhi,${seed})
+variable newy equal random(ylo,yhi,12345)
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 29.3104613462787 ${newy} 19.0
+create_atoms 1 single 29.3104613462787 10.0814295525312 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7040820 2.7040820 -10.591836) to (37.295918 37.295918 58.591836)
+  create_atoms CPU = 0.000 seconds
+variable newx2 equal random(xlo,xhi,${seed})
+variable newx2 equal random(xlo,xhi,12345)
+variable newy2 equal random(ylo,yhi,${seed})
+variable newy2 equal random(ylo,yhi,12345)
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 28.198784318111 ${newy2} 19.0
+create_atoms 2 single 28.198784318111 24.8344751894325 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7040820 2.7040820 -10.591836) to (37.295918 37.295918 58.591836)
+  create_atoms CPU = 0.000 seconds
+run 1000
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   27489    978.25378    -2098.195    539.68409    34.591836    34.591836    69.183672    82784.844 
+   27500    1005.8176   -2096.2277   -52.606709    34.619092    34.619092    69.238185    82980.687 
+   27600    988.25914   -2104.3749   -563.87261    34.636315    34.636315    69.272631    83104.598 
+   27700    974.94711   -2115.3067    1206.8187    34.476604    34.476604    68.953207    81960.277 
+   27800    1018.4277   -2104.3262    658.32528    34.533661    34.533661    69.067323    82367.877 
+   27900    1002.2123   -2107.5453    -2710.924    34.744572    34.744572    69.489144    83886.272 
+   28000     1002.435   -2102.8424    1606.6559    34.531869    34.531869    69.063738    82355.052 
+   28100    984.40942   -2110.2401   -493.11458    34.580426    34.580426    69.160853    82702.954 
+   28200    1029.5298   -2112.3672    197.76073    34.476491    34.476491    68.952983    81959.478 
+   28300    998.31702   -2124.3509    262.33092    34.482442    34.482442    68.964885    82001.926 
+   28400    987.42942    -2125.712   -412.06525    34.504709    34.504709    69.009418    82160.883 
+   28489    972.97806   -2124.3975   -341.51486    34.498859    34.498859    68.997717    82119.099 
+Loop time of 24.836 on 1 procs for 1000 steps with 1286 atoms
+
+Performance: 3.479 ns/day, 6.899 hours/ns, 40.264 timesteps/s
+99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 24.02      | 24.02      | 24.02      |   0.0 | 96.71
+Neigh   | 0.62049    | 0.62049    | 0.62049    |   0.0 |  2.50
+Comm    | 0.026345   | 0.026345   | 0.026345   |   0.0 |  0.11
+Output  | 0.11499    | 0.11499    | 0.11499    |   0.0 |  0.46
+Modify  | 0.048622   | 0.048622   | 0.048622   |   0.0 |  0.20
+Other   |            | 0.005837   |            |       |  0.02
+
+Nlocal:        1286.00 ave        1286 max        1286 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        4739.00 ave        4739 max        4739 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      10704.0 ave       10704 max       10704 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 10704
+Ave neighs/atom = 8.3234837
+Neighbor list builds = 100
+Dangerous builds not checked
+#
+#
+#
+next i
+jump in_deposit1_CdTe.lammps loop
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
+#
+variable seed equal 12345
+variable newx equal random(xlo,xhi,${seed})
+variable newx equal random(xlo,xhi,12345)
+variable newy equal random(ylo,yhi,${seed})
+variable newy equal random(ylo,yhi,12345)
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 13.3268218100787 ${newy} 19.0
+create_atoms 1 single 13.3268218100787 7.53760457274448 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7505707 2.7505707 -10.498859) to (37.249429 37.249429 58.498859)
+  create_atoms CPU = 0.000 seconds
+variable newx2 equal random(xlo,xhi,${seed})
+variable newx2 equal random(xlo,xhi,12345)
+variable newy2 equal random(ylo,yhi,${seed})
+variable newy2 equal random(ylo,yhi,12345)
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 10.708520260439 ${newy2} 19.0
+create_atoms 2 single 10.708520260439 21.6395249631358 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7505707 2.7505707 -10.498859) to (37.249429 37.249429 58.498859)
+  create_atoms CPU = 0.000 seconds
+run 1000
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   28489    971.46605   -2027.3313    2336.7148    34.498859    34.498859    68.997717    82119.099 
+   28500    1321.3549   -2053.0942   -956.96664    34.629132    34.629132    69.258264    83052.901 
+   28600    1037.8216   -2132.3219     1493.441    34.415195    34.415195     68.83039    81523.101 
+   28700    973.67845   -2144.7971   -1047.3309    34.615132    34.615132    69.230265    82952.214 
+   28800    987.52591    -2138.677    230.29472    34.524758    34.524758    69.049515    82304.184 
+   28900    1019.1837   -2110.9509   -11.846369    34.553485    34.553485     69.10697    82509.804 
+   29000    1014.2306   -2102.5022    94.702104    34.569017    34.569017    69.138033    82621.119 
+   29100    1012.4982   -2101.7027   -1187.7745    34.615083    34.615083    69.230166    82951.861 
+   29200    994.34616   -2117.1523    2374.9449    34.378583    34.378583    68.757167    81263.201 
+   29300    1033.3659   -2105.3589    -264.8084    34.510136    34.510136    69.020272    82199.657 
+   29400     992.2454   -2117.0649   -115.14061    34.440385    34.440385    68.880771    81702.247 
+   29489    1034.1567   -2100.8284   -608.56974    34.496343    34.496343    68.992687    82101.139 
+Loop time of 27.612 on 1 procs for 1000 steps with 1288 atoms
+
+Performance: 3.129 ns/day, 7.670 hours/ns, 36.216 timesteps/s
+100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 26.758     | 26.758     | 26.758     |   0.0 | 96.91
+Neigh   | 0.6618     | 0.6618     | 0.6618     |   0.0 |  2.40
+Comm    | 0.026317   | 0.026317   | 0.026317   |   0.0 |  0.10
+Output  | 0.095802   | 0.095802   | 0.095802   |   0.0 |  0.35
+Modify  | 0.064061   | 0.064061   | 0.064061   |   0.0 |  0.23
+Other   |            | 0.006218   |            |       |  0.02
+
+Nlocal:        1288.00 ave        1288 max        1288 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        4754.00 ave        4754 max        4754 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      10654.0 ave       10654 max       10654 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 10654
+Ave neighs/atom = 8.2717391
+Neighbor list builds = 100
+Dangerous builds not checked
+#
+#
+#
+next i
+jump in_deposit1_CdTe.lammps loop
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed)
+#
+variable seed equal 12345
+variable newx equal random(xlo,xhi,${seed})
+variable newx equal random(xlo,xhi,12345)
+variable newy equal random(ylo,yhi,${seed})
+variable newy equal random(ylo,yhi,12345)
+create_atoms 1 single ${newx} ${newy} 19.0
+create_atoms 1 single 15.0793800901111 ${newy} 19.0
+create_atoms 1 single 15.0793800901111 31.683162924971 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7518283 2.7518283 -10.496343) to (37.248172 37.248172 58.496343)
+  create_atoms CPU = 0.000 seconds
+variable newx2 equal random(xlo,xhi,${seed})
+variable newx2 equal random(xlo,xhi,12345)
+variable newy2 equal random(ylo,yhi,${seed})
+variable newy2 equal random(ylo,yhi,12345)
+create_atoms 2 single ${newx2} ${newy2} 19.0
+create_atoms 2 single 33.1133579296599 ${newy2} 19.0
+create_atoms 2 single 33.1133579296599 28.7447423157013 19.0
+Created 1 atoms
+  using lattice units in orthogonal box = (2.7518283 2.7518283 -10.496343) to (37.248172 37.248172 58.496343)
+  create_atoms CPU = 0.000 seconds
+run 1000
+Per MPI rank memory allocation (min/avg/max) = 10.15 | 10.15 | 10.15 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   29489    1032.5521   -1969.0566     3270.136    34.496343    34.496343    68.992687    82101.139 
+   29500    1451.9208   -1999.8077    -1161.888      34.6784      34.6784      69.3568    83407.892 
+   29600    956.60548   -2141.0658   -1231.2712    34.546958    34.546958    69.093915    82463.055 
+   29700    992.50846   -2132.8757     1050.421    34.574569    34.574569    69.149139    82660.939 
+   29800    996.74656   -2118.2555   -1274.3779    34.716972    34.716972    69.433945    83686.523 
+   29900    1007.8728   -2097.1763    63.599802    34.635814    34.635814    69.271627    83100.986 
+   30000    994.48799   -2090.0518    1452.3684     34.55189     34.55189     69.10378    82498.381 
+   30100    973.79799   -2091.1474     1399.198    34.502012    34.502012    69.004024    82141.621 
+   30200    1033.1924    -2088.543     879.9791    34.561413    34.561413    69.122825    82566.609 
+   30300    1025.2685   -2084.3337    1029.8207    34.607096    34.607096    69.214192    82894.453 
+   30400    998.88431   -2097.6094    2465.5804    34.511788    34.511788    69.023575     82211.46 
+   30489    978.45709   -2095.8621   -977.03502    34.705587    34.705587    69.411174    83604.216 
+Loop time of 25.8335 on 1 procs for 1000 steps with 1290 atoms
+
+Performance: 3.344 ns/day, 7.176 hours/ns, 38.709 timesteps/s
+100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 24.995     | 24.995     | 24.995     |   0.0 | 96.75
+Neigh   | 0.6447     | 0.6447     | 0.6447     |   0.0 |  2.50
+Comm    | 0.025103   | 0.025103   | 0.025103   |   0.0 |  0.10
+Output  | 0.10873    | 0.10873    | 0.10873    |   0.0 |  0.42
+Modify  | 0.053575   | 0.053575   | 0.053575   |   0.0 |  0.21
+Other   |            | 0.006216   |            |       |  0.02
+
+Nlocal:        1290.00 ave        1290 max        1290 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        4722.00 ave        4722 max        4722 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      10334.0 ave       10334 max       10334 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 10334
+Ave neighs/atom = 8.0108527
 Neighbor list builds = 100
 Dangerous builds not checked
 #
@@ -1533,4 +1533,4 @@ jump in_deposit1_CdTe.lammps loop
 write_restart deposited_state_1000K_1.restart
 System init for write_restart ...
 
-Total wall time: 0:07:36
+Total wall time: 0:09:43
