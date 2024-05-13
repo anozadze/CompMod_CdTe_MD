@@ -125,9 +125,9 @@ Step Temp TotEng Press Lx Ly Lz Volume
      100            0   -2599.2287   -4534.6924           35           35           70        85750 
      200            0   -2599.2287   -4530.3487           35           35           70        85750 
      247            0   -2599.2287   -4530.3472           35           35           70        85750 
-Loop time of 1.39447 on 1 procs for 247 steps with 1250 atoms
+Loop time of 1.45226 on 1 procs for 247 steps with 1250 atoms
 
-100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+99.6% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 Minimization stats:
   Stopping criterion = energy tolerance
@@ -141,12 +141,12 @@ Minimization stats:
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 1.3401     | 1.3401     | 1.3401     |   0.0 | 96.10
-Neigh   | 0.039536   | 0.039536   | 0.039536   |   0.0 |  2.84
-Comm    | 0.0060131  | 0.0060131  | 0.0060131  |   0.0 |  0.43
-Output  | 0.00011563 | 0.00011563 | 0.00011563 |   0.0 |  0.01
-Modify  | 0.00062127 | 0.00062127 | 0.00062127 |   0.0 |  0.04
-Other   |            | 0.008079   |            |       |  0.58
+Pair    | 1.3967     | 1.3967     | 1.3967     |   0.0 | 96.17
+Neigh   | 0.039715   | 0.039715   | 0.039715   |   0.0 |  2.73
+Comm    | 0.0065929  | 0.0065929  | 0.0065929  |   0.0 |  0.45
+Output  | 0.0001473  | 0.0001473  | 0.0001473  |   0.0 |  0.01
+Modify  | 0.00073668 | 0.00073668 | 0.00073668 |   0.0 |  0.05
+Other   |            | 0.008388   |            |       |  0.58
 
 Nlocal:        1250.00 ave        1250 max        1250 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -180,7 +180,7 @@ fix 2 all nvt temp 1000.0 1000.0 0.01
 #
 # Output structure every 100 steps
 #
-dump eqiul all atom 100 dump_thermalize_1000K_7-0.atom
+dump eqiul all atom 100 dump_thermalize_1000K.atom
 #
 # Define time step (1 femto-second)
 #
@@ -292,20 +292,20 @@ Step Temp TotEng Press Lx Ly Lz Volume
    10100    1016.9287    -2229.861    -4459.175           35           35           70        85750 
    10200    1026.5624   -2239.1068   -4623.1902           35           35           70        85750 
    10247    1037.9718    -2240.459   -4354.4416           35           35           70        85750 
-Loop time of 80.1752 on 1 procs for 10000 steps with 1250 atoms
+Loop time of 81.4703 on 1 procs for 10000 steps with 1250 atoms
 
-Performance: 10.776 ns/day, 2.227 hours/ns, 124.727 timesteps/s
+Performance: 10.605 ns/day, 2.263 hours/ns, 122.744 timesteps/s
 100.0% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 77.125     | 77.125     | 77.125     |   0.0 | 96.20
-Neigh   | 2.4948     | 2.4948     | 2.4948     |   0.0 |  3.11
-Comm    | 0.22347    | 0.22347    | 0.22347    |   0.0 |  0.28
-Output  | 0.073965   | 0.073965   | 0.073965   |   0.0 |  0.09
-Modify  | 0.21559    | 0.21559    | 0.21559    |   0.0 |  0.27
-Other   |            | 0.04208    |            |       |  0.05
+Pair    | 78.424     | 78.424     | 78.424     |   0.0 | 96.26
+Neigh   | 2.514      | 2.514      | 2.514      |   0.0 |  3.09
+Comm    | 0.2134     | 0.2134     | 0.2134     |   0.0 |  0.26
+Output  | 0.073578   | 0.073578   | 0.073578   |   0.0 |  0.09
+Modify  | 0.20546    | 0.20546    | 0.20546    |   0.0 |  0.25
+Other   |            | 0.03987    |            |       |  0.05
 
 Nlocal:        1250.00 ave        1250 max        1250 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -327,4 +327,4 @@ write_restart state_1000K.restart
 System init for write_restart ...
 
 
-Total wall time: 0:01:21
+Total wall time: 0:01:22

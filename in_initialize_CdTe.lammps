@@ -109,7 +109,7 @@ fix 2 all nvt temp 1000.0 1000.0 0.01
 #
 # Output structure every 100 steps
 #
-dump eqiul all atom 100 dump_thermalize_1000K_7-0.atom
+dump eqiul all atom 100 dump_thermalize_1000K.atom
 #
 # Define time step (1 femto-second)
 #
