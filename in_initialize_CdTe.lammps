@@ -21,7 +21,7 @@ boundary        p p p
 # lattice custom 6.828870164 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.5 0.0 0.5 basis 0.5 0.5 0.0 basis 0.0 0.5 0.5 basis 0.75 0.75 0.75 basis 0.25 0.75 0.25 basis 0.25 0.25 0.75 basis 0.75 0.25 0.25 
 # calculated new lattice constant at 1000K via extrapolation: a = ?
 # result from lattice constant trials: a = 8.0 ?!
-lattice custom 7.5 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.5 0.0 0.5 basis 0.5 0.5 0.0 basis 0.0 0.5 0.5 basis 0.75 0.75 0.75 basis 0.25 0.75 0.25 basis 0.25 0.25 0.75 basis 0.75 0.25 0.25 
+lattice custom 7.0 a1 1.0 0.0 0.0 a2 0.0 1.0 0.0 a3 0.0 0.0 1.0 basis 0.0 0.0 0.0 basis 0.5 0.0 0.5 basis 0.5 0.5 0.0 basis 0.0 0.5 0.5 basis 0.75 0.75 0.75 basis 0.25 0.75 0.25 basis 0.25 0.25 0.75 basis 0.75 0.25 0.25 
 region box block 0 5 0 5 -2 8
 create_box 2 box
 
@@ -109,7 +109,7 @@ fix 2 all nvt temp 1000.0 1000.0 0.01
 #
 # Output structure every 100 steps
 #
-dump eqiul all atom 100 dump_thermalize_1000K.atom
+dump eqiul all atom 100 dump_thermalize_1000K_7-0.atom
 #
 # Define time step (1 femto-second)
 #
@@ -121,4 +121,5 @@ run 10000
 # Save state of simulation
 #
 write_restart state_1000K.restart
+
 
