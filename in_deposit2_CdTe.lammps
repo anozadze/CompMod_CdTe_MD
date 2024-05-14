@@ -70,11 +70,11 @@ label loop
 variable seed equal 12345
 variable newx1 equal random(xlo,xhi,${seed})
 variable newy1 equal random(ylo,yhi,${seed})
-create_atoms 1 single ${newx1} ${newy1} 30.0
+create_atoms 1 single ${newx1} ${newy1} 35.0
 set atom ${n} vx 0.0 vy 0.0 vz -36.395
 variable newx2 equal random(xlo,xhi,${seed})
 variable newy2 equal random(ylo,yhi,${seed})
-create_atoms 2 single ${newx2} ${newy2} 30.0
+create_atoms 2 single ${newx2} ${newy2} 35.0
 set atom ${n} vx 0.0 vy 0.0 vz -10.802
 run 1000
 #
