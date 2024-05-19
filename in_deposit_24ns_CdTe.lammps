@@ -1,0 +1,91 @@
+# Set log filename
+log log_deposit_24ns_CdTe.lammps
+
+# Tell LAMMPS that you will be modifying internal data structures (adding atoms)
+atom_modify map array
+
+# Read in the final state of the initialization simulation (will still need to define fixed layer)
+read_restart state_600K.restart
+
+# Define a bottom region of the slab (of thickness 4 Angstroms) in which
+# the atoms will be fixed (i.e., will always experience a zero force)
+variable thickness equal 4.0
+variable sxlo equal xlo
+variable sxhi equal xhi
+variable sylo equal ylo
+variable syhi equal yhi
+variable szlo equal zlo
+variable szhi equal zlo+${thickness}
+region layer block ${sxlo} ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
+group fixedlayer region layer
+
+# Define embedded atom potential for CdTe
+pair_style bop
+pair_coeff * * CdTe1.bop.table Cd Te
+
+# Set the initial velocities to zero
+neighbor 0.3 bin
+neigh_modify delay 0 every 10 check no
+
+# Define outputted variables
+thermo_style custom step temp etotal press lx ly lz vol
+thermo 100
+
+# Set the forces within the fixed layer to always be zero
+fix 1 fixedlayer setforce 0.0 0.0 0.0
+
+# Will perform a finite temperature simulation (fixed volume at 1000K)
+fix 2 all nvt temp 1000.0 1000.0 0.01
+
+# Output structure every 10 steps (this file will rapidly grow in size)
+dump eqiul all atom 10 dump_deposit_24ns_CdTe.atom
+
+# Create initial 14 Te atoms
+variable n equal atoms
+variable seed equal 12345
+variable newz equal 35.0
+variable j loop 14
+  variable newx equal random(v_sxlo,v_sxhi,${seed}+${j})
+  variable newy equal random(v_sylo,v_syhi,${seed}+${j})
+  create_atoms 2 single ${newx} ${newy} ${newz} units box
+  set atom ${n} vx 0.0 vy 0.0 vz -3.89
+  variable n equal atoms  # Update n after atom creation
+next j
+
+# Run for 1 nanosecond (1000 femtoseconds)
+run 1000
+
+variable i loop 20
+
+label loop
+  # Create 14 Te atoms
+  variable j loop 14
+    variable newx equal random(v_sxlo,v_sxhi,${seed}+${i}+${j})
+    variable newy equal random(v_sylo,v_syhi,${seed}+${i}+${j})
+    create_atoms 2 single ${newx} ${newy} ${newz} units box
+    set atom ${n} vx 0.0 vy 0.0 vz -3.89
+    variable n equal atoms  # Update n after atom creation
+  next j
+
+  # Run for 1 nanosecond (1000 femtoseconds)
+  run 1000
+
+  # Create 16 Cd atoms
+  variable n equal atoms  # Update n before atom creation
+  variable k loop 16
+    variable newx equal random(v_sxlo,v_sxhi,${seed}+${i}+${k})
+    variable newy equal random(v_sylo,v_syhi,${seed}+${i}+${k})
+    create_atoms 1 single ${newx} ${newy} ${newz} units box
+    set atom ${n} vx 0.0 vy 0.0 vz -13.1
+    variable n equal atoms  # Update n after atom creation
+  next k
+
+  # Run for 1 nanosecond (1000 femtoseconds)
+  run 1000
+
+next i
+
+jump in_deposit_24ns_CdTe.lammps loop
+
+# Save state of simulation
+write_restart deposited_state_1000K_deposit_24ns_CdTe.restart
