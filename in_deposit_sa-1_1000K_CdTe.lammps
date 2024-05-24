@@ -1,0 +1,95 @@
+#
+# Set log filename
+#
+log log_deposit_sa-1_1000.lammps
+#
+# Tell lammps that you will be modifying internal data structures (adding atoms)
+#
+atom_modify map array
+#
+# Read in the final state of the initialization simulation (will still need to define fixed layer)
+#
+read_restart state_1000K.restart
+#
+# Define a bottom region of the slab (of thickness 4 Angstroms) in which 
+# the atomis will be fixed (i.e. will always experience a zero force)
+#
+variable thickness equal 4.0
+variable sxlo equal xlo
+variable sxhi equal xhi
+variable sylo equal ylo
+variable syhi equal yhi
+variable szlo equal zlo
+variable szhi equal zlo+${thickness}
+region layer block ${sxlo} ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
+group fixedlayer region layer
+#
+# Define embedded atom potential for Tungsten
+#
+pair_style    bop
+pair_coeff  * * CdTe1.bop.table Cd Te
+#
+# Set the initial velocities to zero
+#
+neighbor        0.3 bin  
+neigh_modify    delay 0 every 10 check no
+#
+# Define outputed variables
+#
+thermo_style custom step temp etotal press lx ly lz vol 
+thermo 100
+#
+# Set the forces within the fixed layer to always be zero
+#
+fix 1 fixedlayer setforce 0.0 0.0 0.0
+#
+# Will perform a finite temperature simulation (fixed volume at 1000K)
+#
+fix 2 all nvt temp 1000.0 1000.0 0.01
+# fix 2 all npt temp 1000.0 1000.0 0.01 iso 0.0 0.0 0.01
+#
+# Output structure every 10 steps (this file will rapidly grow in size)
+#
+dump eqiul all atom 10 dump_deposit_sa-1_1000K.atom
+#
+# Will perform twenty deposits (atoms will be created with zero velocity
+# and placed nearer enough such that they are attracted to the surface)
+#
+# This is done via a loop where each cycle represent creation of an atom
+# and 1000 md steps
+# 
+# Also, to keep track of the ID of the newly created atom, introduce a variable
+# n that automatically updates with increasing number of atoms 
+#
+# variable i loop 1 50
+# label loop
+variable n equal atoms
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed to 45)
+# 
+variable seed equal 12345
+variable newx1 equal random(xlo,xhi,${seed})
+variable newy1 equal random(ylo,yhi,${seed})
+create_atoms 1 single ${newx1} ${newy1} 35.0
+# set atom ${n} vx 0.0 vy 0.0 vz -36.395
+set atom ${n} vx 0.0 vy 0.0 vz -13.1
+variable newx2 equal random(xlo,xhi,${seed})
+variable newy2 equal random(ylo,yhi,${seed})
+create_atoms 2 single ${newx2} ${newy2} 35.0
+# set atom ${n} vx 0.0 vy 0.0 vz -10.802
+set atom ${n} vx 0.0 vy 0.0 vz -3.89
+run 1000
+#
+#
+#
+# next i
+#
+# jump in_deposit_sa-1_1000K_CdTe.lammps loop
+#
+# continue for 10000 steps to observe surface diffusion
+run 10000
+#
+# Save state of simulation
+#
+write_restart deposited_state_1000K_sa-1.restart
+

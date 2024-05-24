@@ -1,0 +1,324 @@
+#
+# Tell lammps that you will be modifying internal data structures (adding atoms)
+#
+atom_modify map array
+#
+# Read in the final state of the initialization simulation (will still need to define fixed layer)
+#
+read_restart state_1000K.restart
+Reading restart file ...
+  restart file = 29 Sep 2021, LAMMPS = 29 Sep 2021
+WARNING: Restart file used different # of processors: 3 vs. 7 (src/read_restart.cpp:658)
+  restoring atom style atomic from restart
+  orthogonal box = (0.0000000 0.0000000 -13.788800) to (34.472000 34.472000 103.41600)
+  1 by 1 by 7 MPI processor grid
+  pair style bop stores no restart info
+  1250 atoms
+  read_restart CPU = 0.001 seconds
+#
+# Define a bottom region of the slab (of thickness 4 Angstroms) in which
+# the atomis will be fixed (i.e. will always experience a zero force)
+#
+variable thickness equal 4.0
+variable sxlo equal xlo
+variable sxhi equal xhi
+variable sylo equal ylo
+variable syhi equal yhi
+variable szlo equal zlo
+variable szhi equal zlo+${thickness}
+variable szhi equal zlo+4
+region layer block ${sxlo} ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
+region layer block 0 ${sxhi} ${sylo} ${syhi} ${szlo} ${szhi} units box
+region layer block 0 34.472 ${sylo} ${syhi} ${szlo} ${szhi} units box
+region layer block 0 34.472 0 ${syhi} ${szlo} ${szhi} units box
+region layer block 0 34.472 0 34.472 ${szlo} ${szhi} units box
+region layer block 0 34.472 0 34.472 -13.7888 ${szhi} units box
+region layer block 0 34.472 0 34.472 -13.7888 -9.7888 units box
+group fixedlayer region layer
+150 atoms in group fixedlayer
+#
+# Define embedded atom potential for Tungsten
+#
+pair_style    bop
+pair_coeff  * * CdTe1.bop.table Cd Te
+Reading BOP potential file CdTe1.bop.table with DATE: 2012-06-25
+#
+# Set the initial velocities to zero
+#
+neighbor        0.3 bin
+neigh_modify    delay 0 every 10 check no
+#
+# Define outputed variables
+#
+thermo_style custom step temp etotal press lx ly lz vol
+thermo 100
+#
+# Set the forces within the fixed layer to always be zero
+#
+fix 1 fixedlayer setforce 0.0 0.0 0.0
+#
+# Will perform a finite temperature simulation (fixed volume at 1000K)
+#
+fix 2 all nvt temp 1000.0 1000.0 0.01
+Resetting global fix info from restart file:
+  fix style: nvt, fix ID: 2
+# fix 2 all npt temp 1000.0 1000.0 0.01 iso 0.0 0.0 0.01
+#
+# Output structure every 10 steps (this file will rapidly grow in size)
+#
+dump eqiul all atom 10 dump_deposit_sa-1_1000K.atom
+#
+# Will perform twenty deposits (atoms will be created with zero velocity
+# and placed nearer enough such that they are attracted to the surface)
+#
+# This is done via a loop where each cycle represent creation of an atom
+# and 1000 md steps
+#
+# Also, to keep track of the ID of the newly created atom, introduce a variable
+# n that automatically updates with increasing number of atoms
+#
+# variable i loop 1 50
+# label loop
+variable n equal atoms
+#
+# Create depositing atom (placed randomly within the x-y plane, z distance is fixed to 45)
+#
+variable seed equal 12345
+variable newx1 equal random(xlo,xhi,${seed})
+variable newx1 equal random(xlo,xhi,12345)
+variable newy1 equal random(ylo,yhi,${seed})
+variable newy1 equal random(ylo,yhi,12345)
+create_atoms 1 single ${newx1} ${newy1} 35.0
+create_atoms 1 single 29.9890231223106 ${newy1} 35.0
+create_atoms 1 single 29.9890231223106 0.359402495384216 35.0
+Created 1 atoms
+  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.788800) to (34.472000 34.472000 103.41600)
+  create_atoms CPU = 0.000 seconds
+# set atom ${n} vx 0.0 vy 0.0 vz -36.395
+set atom ${n} vx 0.0 vy 0.0 vz -13.1
+set atom 1251 vx 0.0 vy 0.0 vz -13.1
+Setting atom values ...
+  1 settings made for vx
+  1 settings made for vy
+  1 settings made for vz
+variable newx2 equal random(xlo,xhi,${seed})
+variable newx2 equal random(xlo,xhi,12345)
+variable newy2 equal random(ylo,yhi,${seed})
+variable newy2 equal random(ylo,yhi,12345)
+create_atoms 2 single ${newx2} ${newy2} 35.0
+create_atoms 2 single 10.119870452404 ${newy2} 35.0
+create_atoms 2 single 10.119870452404 0.711599188327789 35.0
+Created 1 atoms
+  using lattice units in orthogonal box = (0.0000000 0.0000000 -13.788800) to (34.472000 34.472000 103.41600)
+  create_atoms CPU = 0.000 seconds
+# set atom ${n} vx 0.0 vy 0.0 vz -10.802
+set atom ${n} vx 0.0 vy 0.0 vz -3.89
+set atom 1252 vx 0.0 vy 0.0 vz -3.89
+Setting atom values ...
+  1 settings made for vx
+  1 settings made for vy
+  1 settings made for vz
+run 1000
+All restart file global fix info was re-assigned
+Neighbor list info ...
+  update every 10 steps, delay 0 steps, check no
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 5.2
+  ghost atom cutoff = 15
+  binsize = 2.6, bins = 14 14 46
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair bop, perpetual
+      attributes: full, newton on, ghost
+      pair build: full/bin/ghost
+      stencil: full/ghost/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 2.491 | 4.649 | 7.472 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   10065      934.961   -2286.2777    180.00816       34.472       34.472     117.2048    139276.67 
+   10100    1005.4786   -2273.0561    391.54436       34.472       34.472     117.2048    139276.67 
+   10200    985.77455   -2276.9331    231.00195       34.472       34.472     117.2048    139276.67 
+   10300    992.20499   -2276.0665    157.35315       34.472       34.472     117.2048    139276.67 
+   10400    990.76511   -2281.2308    155.41297       34.472       34.472     117.2048    139276.67 
+   10500    1009.8351   -2278.0419    217.30143       34.472       34.472     117.2048    139276.67 
+   10600    990.06121   -2269.6562    456.29515       34.472       34.472     117.2048    139276.67 
+   10700    1022.5828   -2273.5875    482.96858       34.472       34.472     117.2048    139276.67 
+   10800    975.80285   -2287.9427    458.89889       34.472       34.472     117.2048    139276.67 
+   10900    1032.8533   -2259.6934    657.22234       34.472       34.472     117.2048    139276.67 
+   11000    999.05681   -2267.4543    501.17379       34.472       34.472     117.2048    139276.67 
+   11065    1009.5174   -2272.0442    493.09462       34.472       34.472     117.2048    139276.67 
+Loop time of 16.239 on 7 procs for 1000 steps with 1252 atoms
+
+Performance: 5.321 ns/day, 4.511 hours/ns, 61.580 timesteps/s
+99.5% CPU use with 7 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0030714  | 4.4168     | 12.921     | 242.9 | 27.20
+Neigh   | 0.0021042  | 0.50692    | 1.2123     |  63.9 |  3.12
+Comm    | 0.026193   | 5.1702     | 14.521     | 216.2 | 31.84
+Output  | 0.1855     | 0.20026    | 0.21257    |   2.1 |  1.23
+Modify  | 0.19829    | 5.9344     | 16.006     | 285.5 | 36.54
+Other   |            | 0.01043    |            |       |  0.06
+
+Nlocal:        178.857 ave         509 max           0 min
+Histogram: 4 0 0 0 1 0 0 0 0 2
+Nghost:        1521.43 ave        3472 max           0 min
+Histogram: 2 1 0 0 1 0 1 1 0 1
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 7 0 0 0 0 0 0 0 0 0
+FullNghs:      1264.29 ave        3818 max           0 min
+Histogram: 4 0 0 0 1 0 0 0 1 1
+
+Total # of neighbors = 8850
+Ave neighs/atom = 7.0686901
+Neighbor list builds = 100
+Dangerous builds not checked
+#
+#
+#
+# next i
+#
+# jump in_deposit_sa-1_1000K_CdTe.lammps loop
+#
+# continue for 10000 steps to observe surface diffusion
+run 10000
+Per MPI rank memory allocation (min/avg/max) = 2.526 | 5.107 | 8.495 Mbytes
+Step Temp TotEng Press Lx Ly Lz Volume 
+   11065    1009.5174   -2272.0442    493.09462       34.472       34.472     117.2048    139276.67 
+   11100    992.68248   -2280.6582    354.90764       34.472       34.472     117.2048    139276.67 
+   11200    1038.9152   -2270.3428     311.4143       34.472       34.472     117.2048    139276.67 
+   11300    997.50178   -2278.7154    69.649192       34.472       34.472     117.2048    139276.67 
+   11400    1018.7675   -2266.0216    160.70691       34.472       34.472     117.2048    139276.67 
+   11500    984.13913   -2274.6191   -325.58876       34.472       34.472     117.2048    139276.67 
+   11600    996.28665   -2274.3326   -419.92651       34.472       34.472     117.2048    139276.67 
+   11700    995.82256   -2275.5927   -466.10526       34.472       34.472     117.2048    139276.67 
+   11800    1038.0036   -2267.7511   -408.19361       34.472       34.472     117.2048    139276.67 
+   11900    953.95032   -2283.2263    -569.6774       34.472       34.472     117.2048    139276.67 
+   12000    998.01898   -2276.9611   -648.72015       34.472       34.472     117.2048    139276.67 
+   12100    1004.1179   -2264.6255   -846.69708       34.472       34.472     117.2048    139276.67 
+   12200    1007.5648    -2266.537   -937.02351       34.472       34.472     117.2048    139276.67 
+   12300    975.61646   -2288.4876   -1019.7154       34.472       34.472     117.2048    139276.67 
+   12400     1022.449   -2278.4749   -902.45996       34.472       34.472     117.2048    139276.67 
+   12500    1011.0525   -2269.3755   -962.33177       34.472       34.472     117.2048    139276.67 
+   12600    958.26492   -2274.1944   -894.31751       34.472       34.472     117.2048    139276.67 
+   12700    996.71207   -2274.8565   -1161.6975       34.472       34.472     117.2048    139276.67 
+   12800    1008.8076   -2272.4821   -1102.5667       34.472       34.472     117.2048    139276.67 
+   12900    993.02793   -2280.2532    -1037.031       34.472       34.472     117.2048    139276.67 
+   13000    956.84948   -2284.7197   -1067.4342       34.472       34.472     117.2048    139276.67 
+   13100    1023.7632   -2258.2019   -1050.2986       34.472       34.472     117.2048    139276.67 
+   13200    996.37189   -2257.7738   -1282.7107       34.472       34.472     117.2048    139276.67 
+   13300    1000.1054   -2277.4365   -1391.1256       34.472       34.472     117.2048    139276.67 
+   13400    998.95389   -2288.0075   -1386.8073       34.472       34.472     117.2048    139276.67 
+   13500    1020.9419   -2274.3722   -1330.2959       34.472       34.472     117.2048    139276.67 
+   13600    991.35772   -2261.9784   -1361.5369       34.472       34.472     117.2048    139276.67 
+   13700    1031.4864   -2261.0498   -1491.1956       34.472       34.472     117.2048    139276.67 
+   13800    979.98568   -2277.2739   -1193.5209       34.472       34.472     117.2048    139276.67 
+   13900     1006.627   -2274.8059   -950.99924       34.472       34.472     117.2048    139276.67 
+   14000    1028.1159   -2277.6232   -1043.4342       34.472       34.472     117.2048    139276.67 
+   14100    1002.2249   -2275.9293   -660.87412       34.472       34.472     117.2048    139276.67 
+   14200    997.57035   -2276.0268   -792.07649       34.472       34.472     117.2048    139276.67 
+   14300    988.07471   -2272.1136    -687.6705       34.472       34.472     117.2048    139276.67 
+   14400    1012.8838   -2277.5114   -433.59981       34.472       34.472     117.2048    139276.67 
+   14500    984.48169   -2288.5484   -470.62664       34.472       34.472     117.2048    139276.67 
+   14600    1019.2835   -2271.4465   -254.03684       34.472       34.472     117.2048    139276.67 
+   14700    968.90078   -2271.5627    -155.5611       34.472       34.472     117.2048    139276.67 
+   14800     1000.624   -2269.2243     -103.211       34.472       34.472     117.2048    139276.67 
+   14900    995.71808   -2277.3971     12.59559       34.472       34.472     117.2048    139276.67 
+   15000    960.53706   -2295.4904   -61.905223       34.472       34.472     117.2048    139276.67 
+   15100    1021.8293   -2270.4804    37.202375       34.472       34.472     117.2048    139276.67 
+   15200    1045.7263   -2263.1192   -61.185859       34.472       34.472     117.2048    139276.67 
+   15300    988.46612   -2278.9025   -55.336756       34.472       34.472     117.2048    139276.67 
+   15400    993.68054   -2277.6509    179.70728       34.472       34.472     117.2048    139276.67 
+   15500    971.58588    -2287.724    133.96366       34.472       34.472     117.2048    139276.67 
+   15600     1011.166   -2275.4351    289.62168       34.472       34.472     117.2048    139276.67 
+   15700    995.20881   -2278.4323   -112.91019       34.472       34.472     117.2048    139276.67 
+   15800    977.56322   -2277.3092    128.90037       34.472       34.472     117.2048    139276.67 
+   15900    1044.1099   -2262.9131    385.28637       34.472       34.472     117.2048    139276.67 
+   16000    1008.0669   -2271.7436    490.24758       34.472       34.472     117.2048    139276.67 
+   16100    996.55487   -2277.7432    496.11853       34.472       34.472     117.2048    139276.67 
+   16200    995.59423   -2281.3059    555.93811       34.472       34.472     117.2048    139276.67 
+   16300    1005.1351   -2277.7375    495.83366       34.472       34.472     117.2048    139276.67 
+   16400    989.36909   -2275.6188    580.25262       34.472       34.472     117.2048    139276.67 
+   16500    992.50079   -2280.6029    159.83915       34.472       34.472     117.2048    139276.67 
+   16600    960.73801   -2281.5617   -90.768807       34.472       34.472     117.2048    139276.67 
+   16700    1009.9488   -2270.2328   -9.2767137       34.472       34.472     117.2048    139276.67 
+   16800    1024.7315    -2276.241   -422.79643       34.472       34.472     117.2048    139276.67 
+   16900    983.56844   -2268.6634   -232.95519       34.472       34.472     117.2048    139276.67 
+   17000    1003.3497   -2274.0369   -519.59851       34.472       34.472     117.2048    139276.67 
+   17100    1010.2685   -2276.3334   -510.54495       34.472       34.472     117.2048    139276.67 
+   17200    982.43961   -2277.7611   -430.39863       34.472       34.472     117.2048    139276.67 
+   17300    1018.8634   -2272.2682   -547.21638       34.472       34.472     117.2048    139276.67 
+   17400    955.43488   -2286.5194   -791.17661       34.472       34.472     117.2048    139276.67 
+   17500    1000.9159   -2279.2061   -916.50616       34.472       34.472     117.2048    139276.67 
+   17600    991.87752   -2276.0304   -790.61508       34.472       34.472     117.2048    139276.67 
+   17700     1015.024   -2272.3728   -737.47448       34.472       34.472     117.2048    139276.67 
+   17800    1017.7664   -2267.0341    -648.3585       34.472       34.472     117.2048    139276.67 
+   17900    976.93969    -2278.019   -812.57788       34.472       34.472     117.2048    139276.67 
+   18000    990.15158   -2277.5979    -1123.295       34.472       34.472     117.2048    139276.67 
+   18100    1015.3364   -2275.9939   -1077.6407       34.472       34.472     117.2048    139276.67 
+   18200    998.30682   -2276.7192   -1008.9613       34.472       34.472     117.2048    139276.67 
+   18300    1000.0497   -2273.2447   -1023.1661       34.472       34.472     117.2048    139276.67 
+   18400    1023.0577   -2268.4604    -981.7214       34.472       34.472     117.2048    139276.67 
+   18500    975.62089   -2277.2665   -1239.2412       34.472       34.472     117.2048    139276.67 
+   18600    1028.9721    -2265.716   -1093.0225       34.472       34.472     117.2048    139276.67 
+   18700    1041.0953   -2269.4717   -1400.0561       34.472       34.472     117.2048    139276.67 
+   18800    985.07097   -2281.6703   -1415.2258       34.472       34.472     117.2048    139276.67 
+   18900    959.13913   -2283.4289   -1463.8413       34.472       34.472     117.2048    139276.67 
+   19000    1027.9827   -2265.7132   -1327.0798       34.472       34.472     117.2048    139276.67 
+   19100    999.86765   -2272.9152   -1255.0502       34.472       34.472     117.2048    139276.67 
+   19200    993.64088    -2279.782   -996.40348       34.472       34.472     117.2048    139276.67 
+   19300    982.87002   -2280.7254   -802.06151       34.472       34.472     117.2048    139276.67 
+   19400    992.94422   -2277.9057   -488.90248       34.472       34.472     117.2048    139276.67 
+   19500    1012.9905   -2268.0126   -516.84251       34.472       34.472     117.2048    139276.67 
+   19600    963.44773   -2277.6809   -399.42822       34.472       34.472     117.2048    139276.67 
+   19700    988.77441   -2281.2888   -219.42677       34.472       34.472     117.2048    139276.67 
+   19800    990.34088   -2279.8305   -176.86456       34.472       34.472     117.2048    139276.67 
+   19900    1010.4412   -2273.8945    3.5680265       34.472       34.472     117.2048    139276.67 
+   20000     1003.161   -2275.2243   -103.02044       34.472       34.472     117.2048    139276.67 
+   20100    954.83416   -2278.4784   -133.13972       34.472       34.472     117.2048    139276.67 
+   20200     970.5483   -2285.9807   -84.809605       34.472       34.472     117.2048    139276.67 
+   20300    995.83574   -2289.1329   -168.62735       34.472       34.472     117.2048    139276.67 
+   20400    984.35937   -2280.4275   -75.561542       34.472       34.472     117.2048    139276.67 
+   20500    1027.5587   -2271.4077    101.26795       34.472       34.472     117.2048    139276.67 
+   20600    992.93613   -2278.5899    -43.81036       34.472       34.472     117.2048    139276.67 
+   20700    993.24911   -2283.5341      41.5984       34.472       34.472     117.2048    139276.67 
+   20800    1002.3322   -2283.4916    330.61776       34.472       34.472     117.2048    139276.67 
+   20900    1011.6313   -2280.9665    386.71082       34.472       34.472     117.2048    139276.67 
+   21000    989.51547   -2272.7498    276.84809       34.472       34.472     117.2048    139276.67 
+   21065    1007.6118   -2266.4549     152.3905       34.472       34.472     117.2048    139276.67 
+Loop time of 194.853 on 7 procs for 10000 steps with 1252 atoms
+
+Performance: 4.434 ns/day, 5.413 hours/ns, 51.321 timesteps/s
+99.6% CPU use with 7 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.032922   | 49.761     | 152.6      | 834.8 | 25.54
+Neigh   | 0.025749   | 5.7452     | 14.529     | 221.3 |  2.95
+Comm    | 4.5541     | 68.014     | 174.64     | 696.6 | 34.91
+Output  | 3.0018     | 3.205      | 3.3882     |   6.6 |  1.64
+Modify  | 3.5477     | 67.998     | 186.92     | 950.0 | 34.90
+Other   |            | 0.1295     |            |       |  0.07
+
+Nlocal:        178.857 ave         510 max           0 min
+Histogram: 4 0 0 0 1 0 0 0 0 2
+Nghost:        1519.57 ave        3472 max           1 min
+Histogram: 2 1 0 0 1 0 1 1 0 1
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 7 0 0 0 0 0 0 0 0 0
+FullNghs:      1259.14 ave        3734 max           0 min
+Histogram: 4 0 0 0 1 0 0 0 1 1
+
+Total # of neighbors = 8814
+Ave neighs/atom = 7.0399361
+Neighbor list builds = 1000
+Dangerous builds not checked
+#
+# Save state of simulation
+#
+write_restart deposited_state_1000K_sa-1.restart
+System init for write_restart ...
+
+Total wall time: 0:03:31
