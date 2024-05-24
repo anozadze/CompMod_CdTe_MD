@@ -99,7 +99,7 @@ write_data initial_relaxed_500K.lammps
 #
 # Set up initial temperature to be 1K within the dynamical region and 0K within the static region
 #
-velocity all create 1000.0 220368
+velocity all create 500.0 220368
 velocity fixedlayer create 0.0 123456
 #
 # Equilibriate at 1000K
